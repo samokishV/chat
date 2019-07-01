@@ -2,6 +2,13 @@
     <div class="inner-cover">
         <form method="post" action="" class="registration-form needs-validation" novalidate>
             <h5 class="text-uppercase bold main-header"> Log in </h5>
+            {{#if errors}}
+                <div class="alert alert-danger" role="alert">
+                    {{#each errors}}
+                        <li>{{this.msg}}</li>
+                    {{/each}}
+                </div>
+            {{/if}}
             <div class="form-group">
                 <label for="name">Login</label>
                 <input type="text" id="name" name="login" class="form-control" value="{{login}}" required>
