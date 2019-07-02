@@ -1,0 +1,25 @@
+<div class="cover">
+    <div class="inner-cover">
+        <table class="table table-striped" style="width: 800px">
+            {{#if messages}}
+                {{#each messages}}
+                    <tr>
+                        <td>{{this.createdAt}}</td>
+                        <td>{{this.user.login}}</td>
+                        <td>{{this.message}}</td>
+                    </tr>
+                {{/each}}
+            {{/if}}
+        </table>
+    </div>
+    <form method="post" action="" class="registration-form needs-validation" novalidate>
+        <div class="row px-md-5">
+            <div class="col-sm-8">
+                <textarea id="message" name="message" class="form-control" required></textarea>
+            </div>
+            <div class="col-sm-3">
+                <input type="submit" class="btn btn-success btn-sm w-100" value="Send">
+            </div>
+        </div>
+    </form>
+</div>

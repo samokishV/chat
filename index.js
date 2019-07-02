@@ -1,12 +1,19 @@
 const express = require("express");
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+var redis = require("redis");
+const redisStore = require('connect-redis')(session);
+const client = redis.createClient();
 const expressHbs = require("express-handlebars");
 const hbs = require("hbs");
 const bodyParser = require("body-parser");
 const {check, validationResult} = require('express-validator');
 
+const Sequelize = require("sequelize");
 const User = require("./user.js");
+const Chat = require("./chat.js");
+const Message = require("./message.js");
+const ChatsMessage = require("./chatsMessage.js");
 
 const app = express();
 
@@ -14,7 +21,8 @@ app.use(cookieParser());
 // Use the session middleware
 app.use(session({
     secret: 'keyboard cat',
-    cookie: { maxAge: 60000 },
+    cookie: {},
+    store: new redisStore({ host: 'localhost', port: 6379, client: client,ttl :  260}),
     resave: false,
     saveUninitialized: true
 }));
@@ -30,9 +38,66 @@ app.engine("hbs", expressHbs({
     }
 ));
 
-app.get(["/", "/chat"], function(request, response){
-    response.send("<h2>Chat page</h2>" +
-        "user_id" + request.session.user_id);
+app.get(["/", "/chat"], async function(request, response){
+    let chats = await Chat.findAll(  {
+        include: [
+            {
+                model: User,
+                attributes: ["login"]
+            }]
+    });
+
+    let messages = await ChatsMessage.findAll({
+        attributes: ['chatId',
+            Sequelize.fn('count', Sequelize.col('chatId'))],
+        group: ['chatId']
+    });
+
+    console.log(messages);
+
+    let userId = request.session.user_id;
+    let user = await User.findById(userId);
+
+    response.render("chat.hbs", {
+        title: "Chats",
+        chats: chats,
+        user: user
+    });
+});
+
+app.post(["/", "/chat"], urlencodedParser, function(request, response) {
+    let title = request.body.title;
+    let userId = request.session.user_id;
+
+    Chat.create({
+        title: title,
+        userId: userId
+    }).then(
+        response.redirect("/chat")
+    );
+});
+
+app.get('/chat/:id', async function(request, response) {
+    let chatId = request.params["id"];
+
+    let chat = await Chat.findOne({where: {id: chatId}});
+    let pageTitle = chat.title;
+
+    response.render("chatPage.hbs", {
+        title: pageTitle
+    });
+});
+
+app.post('/chat/:id', urlencodedParser, function(request, response) {
+    let chatId = request.params["id"];
+    let userId = request.session.user_id;
+    let message = request.body.message;
+
+    Message.create({ message: message, userId: userId}).then(
+        message => {
+            if(!message) return;
+            ChatsMessage.create({chatId: chatId, messageId: message.id});
+        }).then(result => response.redirect("/chat/"+chatId));
 });
 
 app.get("/login", function(request, response){
@@ -71,6 +136,7 @@ app.post("/login", urlencodedParser, [
 
         if (errors.isEmpty()) {
             User.findByLogin(login).then(user => {
+                console.log("id"+user.id);
                 request.session.user_id = user.id;
                 response.redirect("/chat");
             })

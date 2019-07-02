@@ -80,5 +80,19 @@ User.findByLogin = function(login) {
     });
 };
 
+/**
+ * @param {number} id
+ * @returns Promise
+ */
+User.findById = function(id) {
+    return User.findOne({where: {id: id}}).then(user=> {
+        return user;
+    });
+};
+
 module.exports = User;
+const Chat = require("./chat.js");
+User.hasMany(Chat);
+
+
 

@@ -11,7 +11,9 @@
   "dependencies": {
     "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
+    "connect-redis": "^3.4.1",
     "cookie-parser": "^1.4.4",
+    "dayjs": "^1.8.14",
     "db-migrate": "^0.11.6",
     "db-migrate-mysql": "^1.1.10",
     "dotenv": "^8.0.0",
@@ -22,6 +24,7 @@
     "hbs": "^4.0.4",
     "mysql2": "^1.6.5",
     "process": "^0.11.10",
+    "redis": "^2.8.0",
     "sequelize": "^5.8.12"
   }
 }
