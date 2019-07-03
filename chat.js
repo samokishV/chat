@@ -20,37 +20,48 @@ const Chat = sequelize.define("chat", {
     userId: {
         type: Sequelize.INTEGER,
         allowNull: false
+    },
+    count :{
+        type: Sequelize.VIRTUAL
     }
-}, {
-        getterMethods: {
-            messages: function() {
-                return Chat.countMessages(this.id);
-            },
-            createdAt: function () {
-                let createdAt = this.getDataValue('createdAt');
-                return dayjs(createdAt).format('DD-MM-YYYY HH:mm:ss');
-            }
+},  {
+    getterMethods: {
+        createdAt: function () {
+            let createdAt = this.getDataValue('createdAt');
+            return dayjs(createdAt).format('DD-MM-YYYY HH:mm:ss');
         }
     }
-);
+});
+
+/**
+ * @returns Promise
+ */
+Chat.getFullInfo = async function() {
+    let chats = await Chat.findAll( {
+        attributes: ['id', 'title', 'createdAt'],
+        include: [{
+            model: User,
+            attributes: ["login"]
+        }]
+    });
+
+    // set value for virtual count property
+    chats.forEach(async function(chat) {
+        let count = await Message.countMessagesInChat(chat.id);
+        chat.setDataValue('count', count);
+    });
+
+    return await chats;
+};
 
 sequelize.sync().then(result => console.log("Chat schema created successfully."))
     .catch( err=> console.log(err));
-
-/**
- * @param {number} id
- */
-Chat.countMessages = function(id) {
-    return 100;
-    //return Message,countMessagesInChat(id);
-};
 
 module.exports =  Chat;
 const User = require("./user.js");
 Chat.belongsTo(User);
 const Message = require("./message.js");
-const ChatsMessage = require("./chatsMessage.js");
-Chat.belongsToMany(Message, {through: ChatsMessage});
+Chat.hasMany(Message);
 
 
 

@@ -1,7 +1,7 @@
 const express = require("express");
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-var redis = require("redis");
+const redis = require("redis");
 const redisStore = require('connect-redis')(session);
 const client = redis.createClient();
 const expressHbs = require("express-handlebars");
@@ -13,9 +13,22 @@ const Sequelize = require("sequelize");
 const User = require("./user.js");
 const Chat = require("./chat.js");
 const Message = require("./message.js");
-const ChatsMessage = require("./chatsMessage.js");
 
-const app = express();
+const app = require('express')();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
+const Emitter = require("events");
+let emitter = new Emitter();
+
+io.on('connection', function (socket) {
+    console.log('connected');
+
+    socket.on('chatCreate', function(data){
+        emitter.emit('chatAdd', {});
+    });
+});
+
 
 app.use(cookieParser());
 // Use the session middleware
@@ -31,29 +44,30 @@ const urlencodedParser = bodyParser.urlencoded({extended: false});
 
 app.use(express.static('public'));
 
+// Handlebars Helper equal
+const equalHelper = function(lvalue, rvalue, options) {
+    if (arguments.length < 3)
+        throw new Error("Handlebars Helper equal needs 2 parameters");
+    if( lvalue!=rvalue ) {
+        return options.inverse(this);
+    } else {
+        return options.fn(this);
+    }
+};
+
 app.engine("hbs", expressHbs({
         layoutsDir: "views/layouts",
         defaultLayout: "layout",
-        extname: "hbs"
+        extname: "hbs",
+        helpers: {
+            equal: equalHelper
+        }
     }
 ));
 
 app.get(["/", "/chat"], async function(request, response){
-    let chats = await Chat.findAll(  {
-        include: [
-            {
-                model: User,
-                attributes: ["login"]
-            }]
-    });
 
-    let messages = await ChatsMessage.findAll({
-        attributes: ['chatId',
-            Sequelize.fn('count', Sequelize.col('chatId'))],
-        group: ['chatId']
-    });
-
-    console.log(messages);
+    let chats = await Chat.getFullInfo();
 
     let userId = request.session.user_id;
     let user = await User.findById(userId);
@@ -61,20 +75,31 @@ app.get(["/", "/chat"], async function(request, response){
     response.render("chat.hbs", {
         title: "Chats",
         chats: chats,
-        user: user
+        user: user,
     });
 });
 
-app.post(["/", "/chat"], urlencodedParser, function(request, response) {
-    let title = request.body.title;
-    let userId = request.session.user_id;
+app.post(["/", "/chat"], urlencodedParser, [
+    check('title')
+        .trim()
+        .escape()
+        .not().isEmpty()
+    ],
+    function(request, response) {
+        let title = request.body.title;
 
-    Chat.create({
-        title: title,
-        userId: userId
-    }).then(
-        response.redirect("/chat")
-    );
+        let userId = request.session.user_id;
+        const errors = validationResult(request);
+
+        if (errors.isEmpty()) {
+            return Chat.create({
+                title: title,
+                userId: userId
+            }).then(data => {
+                return data.id;
+                }
+            )
+        }
 });
 
 app.get('/chat/:id', async function(request, response) {
@@ -93,11 +118,17 @@ app.post('/chat/:id', urlencodedParser, function(request, response) {
     let userId = request.session.user_id;
     let message = request.body.message;
 
-    Message.create({ message: message, userId: userId}).then(
-        message => {
-            if(!message) return;
-            ChatsMessage.create({chatId: chatId, messageId: message.id});
-        }).then(result => response.redirect("/chat/"+chatId));
+    const errors = validationResult(request);
+
+    if (errors.isEmpty()) {
+        Message.create({
+            chatId: chatId,
+            message: message,
+            userId: userId
+        }).then(
+            result => response.redirect("/chat/" + chatId)
+        );
+    }
 });
 
 app.get("/login", function(request, response){
@@ -197,4 +228,6 @@ app.post("/register", urlencodedParser, [
         }
 });
 
-app.listen(3000);
+http.listen(3000, function(){
+    console.log('listening on *:3000');
+});

@@ -12,20 +12,21 @@
             {{/if}}
             <div class="row px-md-5">
                 <div class="col-sm-8">
-                    <input type="text" id="name" name="title" class="form-control" value="{{login}}" required>
+                    <input type="text" id="title" name="title" class="form-control" value="{{login}}" required>
                 </div>
                 <div class="col-sm-3">
                     <input type="submit" class="btn btn-success btn-sm w-100" value="New chat">
                 </div>
             </div>
         </form>
-        <table class="table table-striped" style="width: 800px">
+        <table class="table table-striped" style="width: 800px" id="chats">
             <tr>
                 <td>id</td>
                 <td>title</td>
                 <td>creator</td>
                 <td>messages</td>
                 <td>created_at</td>
+                <td></td>
             </tr>
             {{#if chats}}
                 {{#each chats}}
@@ -37,11 +38,51 @@
                             </a>
                         </td>
                         <td>{{this.user.login}}</td>
-                        <td>{{this.messages}}</td>
+                        <td>{{this.count}}</td>
                         <td>{{this.createdAt}}</td>
+                        <td>
+                            {{#equal this.user.login  user.login}}
+                                <a href="/chat/delete/{{this.id}}"> Delete </a>
+                            {{/equal}}
+                        </td>
                     </tr>
                 {{/each}}
             {{/if}}
         </table>
     </div>
 </div>
+<script>
+    $(function () {
+        const socket = io();
+        const title = $('#title');
+
+        $('form').submit(function(e){
+            e.preventDefault();
+
+            var type = 'POST';
+            var href = $(this).attr('action');
+            var str = $(this).serialize();
+
+            request(type, href, str, function() {});
+
+            // socket.emit('chatCreate', {message: title.val(), user: {{user}} });
+            title.val('');
+            return false;
+        });
+
+        socket.on('chatAdd', function(data){
+            $('chats').append(
+                "<tr>" +
+                    "<td>" +
+                        "<a href='/chat/" + data.chat.id+ "'>" +
+                            data.chat.title +
+                        "</a>"+
+                    "</td>" +
+                    "<td>"+ data.user +"</td>" +
+                    "<td>0</td>" +
+                    "<td>"+ data.chat.createdAt +"</td>" +
+                 "</tr>"
+            );
+        });
+    });
+</script>

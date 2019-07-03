@@ -12,6 +12,10 @@ const Message = sequelize.define("message", {
         primaryKey: true,
         allowNull: false
     },
+    chatId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
     message: {
         type: Sequelize.STRING,
         allowNull: false
@@ -22,10 +26,27 @@ const Message = sequelize.define("message", {
     }
 });
 
+/**
+ * @param {number} chatId
+ * @returns Promise
+ */
+Message.countMessagesInChat = function(chatId) {
+    return Message.findOne({
+        raw: true,
+        where:{chatId: chatId},
+        attributes: ['chatId', [Sequelize.fn('count', Sequelize.col('chatId')), 'count']],
+        group: ['chatId']
+    }).then(result => {
+        if(result) return result.count;
+        else return 0;
+    });
+};
+
 sequelize.sync().then(result => console.log("Message schema created successfully."))
     .catch( err=> console.log(err));
 
 module.exports =  Message;
 const User = require("./user.js");
-const ChatsMessage = require("./chatsMessage.js");
-Message.belongsToMany(User, {through: ChatsMessage});
+Message.belongsTo(User);
+const Chat = require("./chat.js");
+Message.belongsTo(Chat);
