@@ -27,18 +27,15 @@ const Message = sequelize.define("message", {
 });
 
 /**
- * @param {number} chatId
  * @returns Promise
  */
-Message.countMessagesInChat = function(chatId) {
-    return Message.findOne({
+Message.countMessagesInChats = function() {
+    return Message.findAll({
         raw: true,
-        where:{chatId: chatId},
         attributes: ['chatId', [Sequelize.fn('count', Sequelize.col('chatId')), 'count']],
         group: ['chatId']
     }).then(result => {
-        if(result) return result.count;
-        else return 0;
+        return result;
     });
 };
 

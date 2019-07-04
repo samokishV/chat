@@ -22,7 +22,8 @@ const Chat = sequelize.define("chat", {
         allowNull: false
     },
     count :{
-        type: Sequelize.VIRTUAL
+        type: Sequelize.VIRTUAL,
+        defaultValue: 0
     }
 },  {
     getterMethods: {
@@ -43,15 +44,19 @@ Chat.getFullInfo = async function() {
             model: User,
             attributes: ["login"]
         }]
+    }).then(chats => {
+        return JSON.parse(JSON.stringify(chats))
     });
+
+    let count = await Message.countMessagesInChats();
 
     // set value for virtual count property
-    chats.forEach(async function(chat) {
-        let count = await Message.countMessagesInChat(chat.id);
-        chat.setDataValue('count', count);
+    count.forEach(function(number) {
+        let obj = chats.find(obj => obj.id === number.chatId);
+        obj.count = number.count;
     });
 
-    return await chats;
+    return chats;
 };
 
 sequelize.sync().then(result => console.log("Chat schema created successfully."))

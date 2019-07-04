@@ -1,7 +1,7 @@
 <div class="cover">
     <div class="inner-cover">
         <h1> Hello,{{user.login}}!</h1>
-        <form method="post" action="" class="registration-form needs-validation" novalidate>
+        <form method="post" action="">
             <h5 class="text-uppercase bold main-header"> </h5>
             {{#if errors}}
                 <div class="alert alert-danger" role="alert">
@@ -12,7 +12,7 @@
             {{/if}}
             <div class="row px-md-5">
                 <div class="col-sm-8">
-                    <input type="text" id="title" name="title" class="form-control" value="{{login}}" required>
+                    <input type="text" id="title" name="title" class="form-control" value="" required>
                 </div>
                 <div class="col-sm-3">
                     <input type="submit" class="btn btn-success btn-sm w-100" value="New chat">
@@ -28,25 +28,30 @@
                 <td>created_at</td>
                 <td></td>
             </tr>
-            {{#if chats}}
-                {{#each chats}}
-                    <tr>
-                        <td>{{this.id}}</td>
-                        <td>
-                            <a href="/chat/{{this.id}}">
-                                {{this.title}}
-                            </a>
-                        </td>
-                        <td>{{this.user.login}}</td>
-                        <td>{{this.count}}</td>
-                        <td>{{this.createdAt}}</td>
-                        <td>
-                            {{#equal this.user.login  user.login}}
-                                <a href="/chat/delete/{{this.id}}"> Delete </a>
-                            {{/equal}}
-                        </td>
-                    </tr>
-                {{/each}}
+                {{#if chats}}
+                    {{#each chats}}
+                        <tr>
+                            <td>{{this.id}}</td>
+                            <td>
+                                <a href="/chat/{{this.id}}">
+                                    {{this.title}}
+                                </a>
+                            </td>
+                            <td>{{this.user.login}}</td>
+                            <td>
+                                {{#if count}}
+                                    {{this.count}}
+                                    {{else}} 0
+                                {{/if}}
+                            </td>
+                            <td>{{this.createdAt}}</td>
+                            <td>
+                                {{#equal this.user.login ../user.login}}
+                                    <a href="/chat/delete/{{this.id}}"> Delete </a>
+                                {{/equal}}
+                            </td>
+                        </tr>
+                    {{/each}}
             {{/if}}
         </table>
     </div>
@@ -56,33 +61,55 @@
         const socket = io();
         const title = $('#title');
 
-        $('form').submit(function(e){
+        $('form').submit(async function(e){
             e.preventDefault();
 
             var type = 'POST';
             var href = $(this).attr('action');
             var str = $(this).serialize();
 
-            request(type, href, str, function() {});
+            let response = await request(type, href, str, function(result) {
+                return result;
+            });
 
-            // socket.emit('chatCreate', {message: title.val(), user: {{user}} });
-            title.val('');
-            return false;
+            if(response) {
+                socket.emit('chatCreate', {chat: response, user: {} });
+            }
+
+            title.val(' ');
         });
 
         socket.on('chatAdd', function(data){
-            $('chats').append(
-                "<tr>" +
-                    "<td>" +
-                        "<a href='/chat/" + data.chat.id+ "'>" +
-                            data.chat.title +
-                        "</a>"+
-                    "</td>" +
-                    "<td>"+ data.user +"</td>" +
-                    "<td>0</td>" +
-                    "<td>"+ data.chat.createdAt +"</td>" +
-                 "</tr>"
-            );
+            let link;
+
+            if(data.chat.userId === data.user.id) {
+                link = `<a class="chatDelete" href="/chat/data.chat.id"> Delete </a>`;
+            }
+
+            let content = `
+            <tr>
+                <td>${data.chat.id}</td>
+                <td>
+                    <a href="/chat/${data.chat.id}">
+                        ${data.chat.title}
+                    </a>
+                </td>
+                <td>
+                    ${data.user.login}
+                </td>
+                <td>
+                    ${data.chat.count}
+                </td>
+                <td>
+                    ${data.chat.createdAt}
+                </td>
+                <td>
+                    ${link}
+                </td>
+            </tr>`;
+
+            $('#chats').append(content);
         });
+
     });
 </script>

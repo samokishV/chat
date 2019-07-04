@@ -22,13 +22,10 @@ const Emitter = require("events");
 let emitter = new Emitter();
 
 io.on('connection', function (socket) {
-    console.log('connected');
-
     socket.on('chatCreate', function(data){
-        emitter.emit('chatAdd', {});
+        io.emit('chatAdd', {chat: data.chat, user: data.user});
     });
 });
-
 
 app.use(cookieParser());
 // Use the session middleware
@@ -48,7 +45,7 @@ app.use(express.static('public'));
 const equalHelper = function(lvalue, rvalue, options) {
     if (arguments.length < 3)
         throw new Error("Handlebars Helper equal needs 2 parameters");
-    if( lvalue!=rvalue ) {
+    if( lvalue!==rvalue ) {
         return options.inverse(this);
     } else {
         return options.fn(this);
@@ -65,7 +62,15 @@ app.engine("hbs", expressHbs({
     }
 ));
 
-app.get(["/", "/chat"], async function(request, response){
+function isAuthenticated(req, res, next) {
+    if (req.session.user_id)
+        return next();
+
+    res.redirect('/login');
+}
+
+
+app.get(["/", "/chat"], isAuthenticated, async function(request, response){
 
     let chats = await Chat.getFullInfo();
 
@@ -79,30 +84,32 @@ app.get(["/", "/chat"], async function(request, response){
     });
 });
 
-app.post(["/", "/chat"], urlencodedParser, [
+app.post(["/", "/chat"], isAuthenticated, urlencodedParser, [
     check('title')
         .trim()
         .escape()
         .not().isEmpty()
     ],
-    function(request, response) {
+    async function(request, response) {
         let title = request.body.title;
-
         let userId = request.session.user_id;
+        let user = await User.findById(userId);
+
         const errors = validationResult(request);
 
         if (errors.isEmpty()) {
-            return Chat.create({
+            Chat.create({
                 title: title,
                 userId: userId
-            }).then(data => {
-                return data.id;
-                }
-            )
+            }).then(result => {
+                response.send(result);
+            });
+        } else {
+            response.send(false);
         }
 });
 
-app.get('/chat/:id', async function(request, response) {
+app.get('/chat/:id', isAuthenticated, async function(request, response) {
     let chatId = request.params["id"];
 
     let chat = await Chat.findOne({where: {id: chatId}});
@@ -113,7 +120,7 @@ app.get('/chat/:id', async function(request, response) {
     });
 });
 
-app.post('/chat/:id', urlencodedParser, function(request, response) {
+app.post('/chat/:id', isAuthenticated, urlencodedParser, function(request, response) {
     let chatId = request.params["id"];
     let userId = request.session.user_id;
     let message = request.body.message;
@@ -167,7 +174,6 @@ app.post("/login", urlencodedParser, [
 
         if (errors.isEmpty()) {
             User.findByLogin(login).then(user => {
-                console.log("id"+user.id);
                 request.session.user_id = user.id;
                 response.redirect("/chat");
             })
