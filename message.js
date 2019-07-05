@@ -39,6 +39,21 @@ Message.countMessagesInChats = function() {
     });
 };
 
+/**
+ * @param id
+ * @returns Promise
+ */
+Message.countMessagesInChat = function(id) {
+    return Message.findOne({
+        where: {id: id},
+        raw: true,
+        attributes: ['chatId', [Sequelize.fn('count', Sequelize.col('chatId')), 'count']],
+        group: ['chatId']
+    }).then(result => {
+        return result;
+    });
+};
+
 sequelize.sync().then(result => console.log("Message schema created successfully."))
     .catch( err=> console.log(err));
 

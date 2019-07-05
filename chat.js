@@ -59,6 +59,48 @@ Chat.getFullInfo = async function() {
     return chats;
 };
 
+/**
+ * @param {number} id
+ * @returns Promise
+ */
+Chat.findById = async function(id) {
+    let chat = await Chat.findOne( {
+        where: {id : id},
+        attributes: ['id', 'title', 'createdAt'],
+        include: [{
+            model: User,
+            attributes: ["login"]
+        }]
+    }).then(chat => {
+        return JSON.parse(JSON.stringify(chat))
+    });
+
+    let count = await Message.countMessagesInChat(id);
+    if(count) {
+        chat.count = count;
+    } else {
+        chat.count = 0;
+    }
+
+    return chat;
+};
+
+/**
+ * param {number} id
+ * @returns Promise
+ */
+Chat.exists = async function(id) {
+    return await Chat.findOne({where: {id: id}});
+};
+
+/**
+ * @param {number} id
+ * @returns Promise
+ */
+Chat.deleteById = async function(id) {
+    return await Chat.destroy({where: {id: id}});
+};
+
 sequelize.sync().then(result => console.log("Chat schema created successfully."))
     .catch( err=> console.log(err));
 

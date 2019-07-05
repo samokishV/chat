@@ -25,6 +25,10 @@ io.on('connection', function (socket) {
     socket.on('chatCreate', function(data){
         io.emit('chatAdd', {chat: data.chat, user: data.user});
     });
+
+    socket.on('chatRemove', function(data) {
+       io.emit('chatDelete', data)
+    });
 });
 
 app.use(cookieParser());
@@ -84,7 +88,7 @@ app.get(["/", "/chat"], isAuthenticated, async function(request, response){
     });
 });
 
-app.post(["/", "/chat"], isAuthenticated, urlencodedParser, [
+app.post("/chat", isAuthenticated, urlencodedParser, [
     check('title')
         .trim()
         .escape()
@@ -101,12 +105,19 @@ app.post(["/", "/chat"], isAuthenticated, urlencodedParser, [
             Chat.create({
                 title: title,
                 userId: userId
-            }).then(result => {
-                response.send(result);
+            }).then(async result => {
+                let chat = await Chat.findById(result.id);
+                response.send(chat);
             });
-        } else {
-            response.send(false);
         }
+});
+
+app.delete("/chat/:id", isAuthenticated, urlencodedParser, async function(request, response){
+    let chatId = request.params["id"];
+
+    Chat.deleteById(chatId).then(
+        response.send({id: chatId})
+    );
 });
 
 app.get('/chat/:id', isAuthenticated, async function(request, response) {
