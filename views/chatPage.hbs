@@ -30,6 +30,10 @@
         const socket = io();
         const message = $("#message");
 
+        let roomName = "{{room}}";
+
+        socket.emit('room', {room: roomName});
+
         $('form').submit(async function (e) {
             e.preventDefault();
 
@@ -42,7 +46,7 @@
             });
 
             if (response) {
-                socket.emit('messageCreate', {message: response});
+                socket.emit('messageCreate', {message: response, room: roomName});
             }
 
             message.val(' ');
@@ -54,6 +58,11 @@
             let template = Handlebars.compile(source);
             let html = template({message: data.message, user: data.message.user});
             $("table").append(html);
+        });
+
+        socket.on('chatDelete', function(data) {
+            alert('Chat was closed!');
+            window.location.href = '/chat';
         });
     });
 </script>

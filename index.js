@@ -57,17 +57,21 @@ app.engine("hbs", expressHbs({
 ));
 
 io.on('connection', function (socket) {
-        socket.on('chatCreate', function (data) {
-            io.emit('chatAdd', {chat: data.chat, user: data.user});
-        });
+    socket.on('room', function(data) {
+        socket.join(data.room);
+    });
 
-        socket.on('chatRemove', function (data) {
-            io.emit('chatDelete', data)
-        });
+    socket.on('chatCreate', function (data) {
+        io.emit('chatAdd', {chat: data.chat, user: data.user});
+    });
 
-        socket.on('messageCreate', function (data) {
-            io.emit('messageAdd', data);
-        });
+    socket.on('chatRemove', function (data) {
+        io.emit('chatDelete', data)
+    });
+
+    socket.on('messageCreate', function (data) {
+        io.to(data.room).emit('messageAdd', data);
+    });
 });
 
 function isAuthenticated(req, res, next) {
@@ -124,7 +128,6 @@ app.delete("/chat/:id", isAuthenticated, urlencodedParser, async function(reques
 
 app.get('/chat/:id', isAuthenticated, async function(request, response) {
     let chatId = request.params["id"];
-    var room = request.params["id"];
 
     let chat = await Chat.findOne({where: {id: chatId}});
     let pageTitle = chat.title;
@@ -133,7 +136,8 @@ app.get('/chat/:id', isAuthenticated, async function(request, response) {
 
     response.render("chatPage.hbs", {
         title: pageTitle,
-        messages: messages
+        messages: messages,
+        room: chatId
     });
 });
 
