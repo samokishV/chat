@@ -1,6 +1,6 @@
 <div class="cover">
     <div class="inner-cover">
-        <table class="table table-striped" style="width: 800px">
+        <table class="table" style="width: 800px;">
             {{#if messages}}
                 {{#each messages}}
                     <tr>
@@ -11,15 +11,56 @@
                 {{/each}}
             {{/if}}
         </table>
-    </div>
-    <form method="post" action="" class="registration-form needs-validation" novalidate>
-        <div class="row px-md-5">
-            <div class="col-sm-8">
-                <textarea id="message" name="message" class="form-control" required></textarea>
-            </div>
-            <div class="col-sm-3">
-                <input type="submit" class="btn btn-success btn-sm w-100" value="Send">
-            </div>
+        <div class="">
+            <form method="post" action="" novalidate>
+                <div class="row px-md-5">
+                    <div class="col-sm-8">
+                        <textarea id="message" name="message" class="form-control" required></textarea>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="submit" class="btn btn-success btn-sm w-100" value="Send">
+                    </div>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
+<script>
+    $(document).ready(function() {
+        const socket = io();
+        const message = $("#message");
+
+        $('form').submit(async function (e) {
+            e.preventDefault();
+
+            let type = 'POST';
+            let href = $(this).attr('action');
+            let str = $(this).serialize();
+
+            let response = await request(type, href, str, function (result) {
+                return result;
+            });
+
+            if (response) {
+                socket.emit('messageCreate', {message: response});
+            }
+
+            message.val(' ');
+            return false;
+        });
+
+        socket.on('messageAdd', function(data) {
+            let source = $("#ajax-message").html();
+            let template = Handlebars.compile(source);
+            let html = template({message: data.message, user: data.message.user});
+            $("table").append(html);
+        });
+    });
+</script>
+<script id="ajax-message" type="text/x-handlebars-template">
+    <tr>
+        <td>\{{message.createdAt}}</td>
+        <td>\{{user.login}}</td>
+        <td>\{{message.message}}</td>
+    </tr>
+</script>

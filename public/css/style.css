@@ -1,5 +1,10 @@
 .main-header {
-    margin: auto;
     text-align: center;
-    margin-top: 20px;
+    margin: 20px auto auto;
+}
+
+.fixed-bottom {
+    position: fixed;
+    bottom: 0;
+    margin-bottom: 40px;
 }

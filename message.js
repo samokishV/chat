@@ -1,4 +1,5 @@
 const Sequelize = require("sequelize");
+const dayjs = require('dayjs');
 
 const sequelize = new Sequelize("chat_db", "samokish", "qwerty", {
     dialect: "mysql",
@@ -23,6 +24,13 @@ const Message = sequelize.define("message", {
     userId: {
         type: Sequelize.INTEGER,
         allowNull: false
+    },
+}, {
+    getterMethods: {
+        createdAt: function () {
+            let createdAt = this.getDataValue('createdAt');
+            return dayjs(createdAt).format('DD-MM-YYYY HH:mm:ss');
+        }
     }
 });
 
@@ -40,17 +48,47 @@ Message.countMessagesInChats = function() {
 };
 
 /**
- * @param id
+ * @param {number} id
  * @returns Promise
  */
 Message.countMessagesInChat = function(id) {
-    return Message.findOne({
-        where: {id: id},
+    return Message.findAll({
+        where: {chatId: id},
         raw: true,
         attributes: ['chatId', [Sequelize.fn('count', Sequelize.col('chatId')), 'count']],
         group: ['chatId']
     }).then(result => {
         return result;
+    });
+};
+
+/**
+ * @param {number} id
+ */
+Message.getByChatId = function(id) {
+    return Message.findAll({
+        where: {chatId: id},
+        include: [{
+            model: User,
+            attributes: ["login"]
+        }],
+        order: [
+            ['createdAt', 'ASC']
+        ]
+    });
+};
+
+/**
+ * @param id
+ * @returns Promise
+ */
+Message.getById = function(id) {
+    return Message.findOne({
+        where: {id: id},
+        include: [{
+            model: User,
+            attributes: ["login"]
+        }]
     });
 };
 

@@ -21,16 +21,6 @@ const io = require('socket.io')(http);
 const Emitter = require("events");
 let emitter = new Emitter();
 
-io.on('connection', function (socket) {
-    socket.on('chatCreate', function(data){
-        io.emit('chatAdd', {chat: data.chat, user: data.user});
-    });
-
-    socket.on('chatRemove', function(data) {
-       io.emit('chatDelete', data)
-    });
-});
-
 app.use(cookieParser());
 // Use the session middleware
 app.use(session({
@@ -66,13 +56,26 @@ app.engine("hbs", expressHbs({
     }
 ));
 
+io.on('connection', function (socket) {
+        socket.on('chatCreate', function (data) {
+            io.emit('chatAdd', {chat: data.chat, user: data.user});
+        });
+
+        socket.on('chatRemove', function (data) {
+            io.emit('chatDelete', data)
+        });
+
+        socket.on('messageCreate', function (data) {
+            io.emit('messageAdd', data);
+        });
+});
+
 function isAuthenticated(req, res, next) {
     if (req.session.user_id)
         return next();
 
     res.redirect('/login');
 }
-
 
 app.get(["/", "/chat"], isAuthenticated, async function(request, response){
 
@@ -97,7 +100,6 @@ app.post("/chat", isAuthenticated, urlencodedParser, [
     async function(request, response) {
         let title = request.body.title;
         let userId = request.session.user_id;
-        let user = await User.findById(userId);
 
         const errors = validationResult(request);
 
@@ -122,31 +124,42 @@ app.delete("/chat/:id", isAuthenticated, urlencodedParser, async function(reques
 
 app.get('/chat/:id', isAuthenticated, async function(request, response) {
     let chatId = request.params["id"];
+    var room = request.params["id"];
 
     let chat = await Chat.findOne({where: {id: chatId}});
     let pageTitle = chat.title;
 
+    let messages = await Message.getByChatId(chatId);
+
     response.render("chatPage.hbs", {
-        title: pageTitle
+        title: pageTitle,
+        messages: messages
     });
 });
 
-app.post('/chat/:id', isAuthenticated, urlencodedParser, function(request, response) {
-    let chatId = request.params["id"];
-    let userId = request.session.user_id;
-    let message = request.body.message;
+app.post('/chat/:id', isAuthenticated, urlencodedParser, [
+        check('message')
+            .trim()
+            .escape()
+            .not().isEmpty()
+    ],
+    function(request, response) {
+        let chatId = request.params["id"];
+        let userId = request.session.user_id;
+        let message = request.body.message;
 
-    const errors = validationResult(request);
+        const errors = validationResult(request);
 
-    if (errors.isEmpty()) {
-        Message.create({
-            chatId: chatId,
-            message: message,
-            userId: userId
-        }).then(
-            result => response.redirect("/chat/" + chatId)
-        );
-    }
+        if (errors.isEmpty()) {
+            Message.create({
+                chatId: chatId,
+                message: message,
+                userId: userId
+            }).then(async result => {
+                let message = await Message.getById(result.id);
+                response.send(message)
+            });
+        }
 });
 
 app.get("/login", function(request, response){

@@ -76,7 +76,8 @@ Chat.findById = async function(id) {
     });
 
     let count = await Message.countMessagesInChat(id);
-    if(count) {
+
+    if(count.length > 0) {
         chat.count = count;
     } else {
         chat.count = 0;
