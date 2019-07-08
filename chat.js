@@ -43,7 +43,10 @@ Chat.getFullInfo = async function() {
         include: [{
             model: User,
             attributes: ["login"]
-        }]
+        }],
+        order: [
+            ['createdAt', 'ASC']
+        ]
     }).then(chats => {
         return JSON.parse(JSON.stringify(chats))
     });

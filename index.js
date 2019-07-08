@@ -70,6 +70,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('messageCreate', function (data) {
+        io.emit('messageAddGlobal', data);
         io.to(data.room).emit('messageAdd', data);
     });
 });

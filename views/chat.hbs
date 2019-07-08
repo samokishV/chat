@@ -33,12 +33,13 @@
                         <tr id="tr{{this.id}}">
                             <td>{{this.id}}</td>
                             <td>
-                                <a class=".room-name" href="/chat/{{this.id}}">
+                                <a class="room-name" href="/chat/{{this.id}}">
                                     {{this.title}}
                                 </a>
                             </td>
                             <td>{{this.user.login}}</td>
-                            <td>
+                            <td class="number">
+
                                 {{#if count}}
                                     {{this.count}}
                                     {{else}} 0
@@ -100,7 +101,7 @@
                 <td>
                     ${data.chat.user.login}
                 </td>
-                <td>
+                <td class="number">
                     ${data.chat.count}
                 </td>
                 <td>
@@ -134,6 +135,14 @@
 
         socket.on('chatDelete', function(data) {
             $("#tr"+data.id).remove();
+        });
+
+        socket.on('messageAddGlobal', function(data) {
+            let chatId = data.message.chatId;
+            let numberEl = $("#tr"+ chatId +" .number");
+            let count = parseInt(numberEl[0].innerText);
+
+            numberEl[0].innerHTML = count + 1;
         });
     });
 </script>
