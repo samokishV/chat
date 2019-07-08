@@ -1,6 +1,6 @@
 <div class="cover">
     <div class="inner-cover">
-        <h1> Hello, <span id="login">{{user.login}}</span>!</h1>
+        <h1> Hello, <span id="login">{{login}}</span>!</h1>
         <form method="post" action="">
             <h5 class="text-uppercase bold main-header"> </h5>
             {{#if errors}}
@@ -28,31 +28,10 @@
                 <td>created_at</td>
                 <td></td>
             </tr>
-                {{#if chats}}
-                    {{#each chats}}
-                        <tr id="tr{{this.id}}">
-                            <td>{{this.id}}</td>
-                            <td>
-                                <a class="room-name" href="/chat/{{this.id}}">
-                                    {{this.title}}
-                                </a>
-                            </td>
-                            <td>{{this.user.login}}</td>
-                            <td class="number">
-
-                                {{#if count}}
-                                    {{this.count}}
-                                    {{else}} 0
-                                {{/if}}
-                            </td>
-                            <td>{{this.createdAt}}</td>
-                            <td>
-                                {{#equal this.user.login ../user.login}}
-                                    <a class="chatDelete" href="/chat/{{this.id}}"> Delete </a>
-                                {{/equal}}
-                            </td>
-                        </tr>
-                    {{/each}}
+            {{#if chats}}
+                {{#each chats}}
+                    {{> chat chat=this login=../login}}
+                {{/each}}
             {{/if}}
         </table>
     </div>
@@ -74,45 +53,26 @@
             });
 
             if(response) {
-                socket.emit('chatCreate', {chat: response, user: {} });
+                socket.emit('chatCreate', {chat: response});
             }
 
             title.val(' ');
         });
 
-        socket.on('chatAdd', function(data){
-            let link;
-            let login = document.getElementById('login').innerHTML;
+        socket.on('chatAdd', async function(data){
+            let login = "{{login}}";
+            let chat = data.chat;
+            console.log(chat);
 
-            if(data.chat.user.login === login) {
-                link = `<a class="chatDelete" href="/chat/${data.chat.id}"> Delete </a>`;
-            } else {
-                link = '';
-            }
+            let type = 'POST';
+            let href = '/chat-row-template';
+            let str = {login: login, chat: JSON.stringify(chat)};
 
-            let content = `
-            <tr id="tr${data.chat.id}">
-                <td>${data.chat.id}</td>
-                <td>
-                    <a href="/chat/${data.chat.id}">
-                        ${data.chat.title}
-                    </a>
-                </td>
-                <td>
-                    ${data.chat.user.login}
-                </td>
-                <td class="number">
-                    ${data.chat.count}
-                </td>
-                <td>
-                    ${data.chat.createdAt}
-                </td>
-                <td>
-                    ${link}
-                </td>
-            </tr>`;
+            let response = await request(type, href, str, function(result) {
+                return result;
+            });
 
-            $('#chats').append(content);
+            $("table").append(response);
         });
 
         $('#chats').on('click', '.chatDelete', async function(e) {

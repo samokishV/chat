@@ -5,11 +5,9 @@ const redis = require("redis");
 const redisStore = require('connect-redis')(session);
 const client = redis.createClient();
 const expressHbs = require("express-handlebars");
-const hbs = require("hbs");
 const bodyParser = require("body-parser");
 const {check, validationResult} = require('express-validator');
 
-const Sequelize = require("sequelize");
 const User = require("./user.js");
 const Chat = require("./chat.js");
 const Message = require("./message.js");
@@ -17,9 +15,6 @@ const Message = require("./message.js");
 const app = require('express')();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
-
-const Emitter = require("events");
-let emitter = new Emitter();
 
 app.use(cookieParser());
 // Use the session middleware
@@ -62,7 +57,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('chatCreate', function (data) {
-        io.emit('chatAdd', {chat: data.chat, user: data.user});
+        io.emit('chatAdd', data);
     });
 
     socket.on('chatRemove', function (data) {
@@ -92,7 +87,18 @@ app.get(["/", "/chat"], isAuthenticated, async function(request, response){
     response.render("chat.hbs", {
         title: "Chats",
         chats: chats,
-        user: user,
+        login: user.login,
+    });
+});
+
+app.post("/chat-row-template", urlencodedParser, function(request, response){
+    let chat = JSON.parse(request.body.chat);
+    let login = request.body.login;
+
+    response.render("partials/chat.hbs", {
+        chat: chat,
+        login: login,
+        layout: false
     });
 });
 

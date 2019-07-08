@@ -1,0 +1,22 @@
+<tr id="tr{{chat.id}}">
+    <td>{{chat.id}}</td>
+    <td>
+        <a class="room-name" href="/chat/{{chat.id}}">
+            {{chat.title}}
+        </a>
+    </td>
+    <td>{{chat.user.login}}</td>
+    <td class="number">
+
+        {{#if count}}
+        {{chat.count}}
+        {{else}} 0
+        {{/if}}
+    </td>
+    <td>{{chat.createdAt}}</td>
+    <td>
+        {{#equal chat.user.login login}}
+        <a class="chatDelete" href="/chat/{{chat.id}}"> Delete </a>
+        {{/equal}}
+    </td>
+</tr>
