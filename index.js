@@ -102,6 +102,15 @@ app.post("/chat-row-template", urlencodedParser, function(request, response){
     });
 });
 
+app.post("/message-row-template", urlencodedParser, function(request, response){
+    let message = JSON.parse(request.body.message);
+
+    response.render("partials/userMessage.hbs", {
+        message: message,
+        layout: false
+    });
+});
+
 app.post("/chat", isAuthenticated, urlencodedParser, [
     check('title')
         .trim()

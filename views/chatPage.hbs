@@ -1,13 +1,10 @@
 <div class="cover">
+    <input id="roomName" type="hidden" value="{{room}}">
     <div class="inner-cover">
         <table class="table" style="width: 800px;">
             {{#if messages}}
                 {{#each messages}}
-                    <tr>
-                        <td>{{this.createdAt}}</td>
-                        <td>{{this.user.login}}</td>
-                        <td>{{this.message}}</td>
-                    </tr>
+                    {{> userMessage message=this}}
                 {{/each}}
             {{/if}}
         </table>
@@ -25,51 +22,4 @@
         </div>
     </div>
 </div>
-<script>
-    $(document).ready(function() {
-        const socket = io();
-        const message = $("#message");
-
-        let roomName = "{{room}}";
-
-        socket.emit('room', {room: roomName});
-
-        $('form').submit(async function (e) {
-            e.preventDefault();
-
-            let type = 'POST';
-            let href = $(this).attr('action');
-            let str = $(this).serialize();
-
-            let response = await request(type, href, str, function (result) {
-                return result;
-            });
-
-            if (response) {
-                socket.emit('messageCreate', {message: response, room: roomName});
-            }
-
-            message.val(' ');
-            return false;
-        });
-
-        socket.on('messageAdd', function(data) {
-            let source = $("#ajax-message").html();
-            let template = Handlebars.compile(source);
-            let html = template({message: data.message, user: data.message.user});
-            $("table").append(html);
-        });
-
-        socket.on('chatDelete', function(data) {
-            alert('Chat was closed!');
-            window.location.href = '/chat';
-        });
-    });
-</script>
-<script id="ajax-message" type="text/x-handlebars-template">
-    <tr>
-        <td>\{{message.createdAt}}</td>
-        <td>\{{user.login}}</td>
-        <td>\{{message.message}}</td>
-    </tr>
-</script>
+<script src="/js/message.js"></script>
