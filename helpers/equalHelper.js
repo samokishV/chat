@@ -1,9 +1,6 @@
-exports.equal = function(lvalue, rvalue, options) {
-    if (arguments.length < 3)
-        throw new Error("Handlebars Helper equal needs 2 parameters");
-    if( lvalue!==rvalue ) {
-        return options.inverse(this);
-    } else {
-        return options.fn(this);
-    }
+exports.equal = (lvalue, rvalue, options) => {
+  if (lvalue !== rvalue) {
+    return options.inverse(this);
+  }
+  return options.fn(this);
 };

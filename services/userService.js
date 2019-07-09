@@ -1,5 +1,5 @@
+const bcrypt = require('bcrypt');
 const User = require('../models/user.js');
-const bcrypt = require("bcrypt");
 
 const UserService = {};
 
@@ -8,35 +8,31 @@ const UserService = {};
  * @param {string} password
  * @returns Promise
  */
-UserService.create = function(login, password) {
-    return User.create({
-        login: login,
-        password: password
-    });
-};
+UserService.create = (login, password) => User.create({
+  login,
+  password,
+});
 
 /**
  * @param {string} login
  * @returns Promise
  */
-UserService.loginExists = function(login) {
-    return User.findOne({
-        where: {login: login}
-    }).then(user=> {
-        if(user) return true;
-    });
-};
+UserService.loginExists = login => User.findOne({
+  where: { login },
+}).then((user) => {
+  if (user) return true;
+});
 
 /**
  * @param {string} login
  * @param {string} password
  * @returns Promise
  */
-UserService.passwordExists = async function(login, password) {
-    let user = await UserService.findByLogin(login);
-    if(user) {
-        return UserService.passwordsIsEqual(password, user.password);
-    }
+UserService.passwordExists = async (login, password) => {
+  const user = await UserService.findByLogin(login);
+  if (user) {
+    return UserService.passwordsIsEqual(password, user.password);
+  }
 };
 
 /**
@@ -44,34 +40,22 @@ UserService.passwordExists = async function(login, password) {
  * @param {string} password2
  * @returns Promise
  */
-UserService.passwordsIsEqual = function(password1, password2) {
-    return bcrypt.compare(password1, password2).then(res => {
-        return res;
-    });
-};
+UserService.passwordsIsEqual = (password1, password2) => bcrypt.compare(password1, password2).then(res => res);
 
 /**
  * @param {string} login
  * @returns Promise
  */
-UserService.findByLogin = function(login) {
-    return User.findOne({
-        where: {login: login}
-    }).then(user=> {
-        return user;
-    });
-};
+UserService.findByLogin = login => User.findOne({
+  where: { login },
+}).then(user => user);
 
 /**
  * @param {number} id
  * @returns Promise
  */
-UserService.findById = function(id) {
-    return User.findOne({
-        where: {id: id}
-    }).then(user=> {
-        return user;
-    });
-};
+UserService.findById = id => User.findOne({
+  where: { id },
+}).then(user => user);
 
 module.exports = UserService;
