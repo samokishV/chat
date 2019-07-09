@@ -1,0 +1,18 @@
+{
+    "dbConfig": {
+      "host": "localhost",
+      "dbName": "chat_db",
+      "dbDriver": "mysql",
+      "username": "samokish",
+      "password": "qwerty"
+    },
+    "sessionConfig": {
+      "host": "localhost",
+      "port": 6379,
+      "ttl" :  260
+    },
+    "serverConfig": {
+      "host": "192.168.0.56",
+      "port": 3000
+    }
+}
