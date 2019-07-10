@@ -1,44 +1,47 @@
-const Sequelize = require("sequelize");
+const Sequelize = require('sequelize');
 const dayjs = require('dayjs');
-const sequelize = require("./dbConnect");
+const decode = require('unescape');
+const sequelize = require('./dbConnect');
 
-const Chat = sequelize.define("chat", {
-    id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-        allowNull: false
+const Chat = sequelize.define('chat', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false,
+  },
+  title: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  userId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
+  count: {
+    type: Sequelize.VIRTUAL,
+    defaultValue: 0,
+  },
+}, {
+  getterMethods: {
+    title() {
+      const title = this.getDataValue('title');
+      return decode(title);
     },
-    title: {
-        type: Sequelize.STRING,
-        allowNull: false
+    createdAt() {
+      const createdAt = this.getDataValue('createdAt');
+      return dayjs(createdAt).format('DD-MM-YYYY HH:mm:ss');
     },
-    userId: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    count :{
-        type: Sequelize.VIRTUAL,
-        defaultValue: 0
-    }
-},  {
-    getterMethods: {
-        createdAt: function () {
-            let createdAt = this.getDataValue('createdAt');
-            return dayjs(createdAt).format('DD-MM-YYYY HH:mm:ss');
-        }
-    }
+  },
 });
 
-sequelize.sync().then(result => console.log("Chat schema created successfully."))
-    .catch( err=> console.log(err));
+sequelize.sync().then(result => console.log('Chat schema created successfully.'))
+  .catch(err => console.log(err));
 
-module.exports =  Chat;
-const User = require("./user.js");
+module.exports = Chat;
+const User = require('./user.js');
+
 Chat.belongsTo(User);
-const Message = require("./message.js");
+const Message = require('./message.js');
+
 Chat.hasMany(Message);
-
-
-
-

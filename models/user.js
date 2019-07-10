@@ -1,40 +1,44 @@
-const Sequelize = require("sequelize");
-const sequelize = require("./dbConnect");
-const bcrypt = require("bcrypt");
+const Sequelize = require('sequelize');
+const bcrypt = require('bcrypt');
+const decode = require('unescape');
+const sequelize = require('./dbConnect');
 
-const User = sequelize.define("user", {
-    id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-        allowNull: false
+const User = sequelize.define('user', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false,
+  },
+  login: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  password: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+}, {
+  getterMethods: {
+    login() {
+      const login = this.getDataValue('login');
+      return decode(login);
     },
-    login: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    password: {
-        type: Sequelize.STRING,
-        allowNull: false
-    }
+  },
 });
 
-sequelize.sync().then(result => console.log("User schema created successfully."))
-    .catch( err=> console.log(err));
+sequelize.sync().then(result => console.log('User schema created successfully.'))
+  .catch(err => console.log(err));
 
-User.beforeCreate((user, options) => {
-    return bcrypt.hash(user.password, 10)
-        .then(hash => {
-            user.password = hash;
-        })
-        .catch(err => {
-            throw new Error();
-        });
-});
+User.beforeCreate((user, options) => bcrypt.hash(user.password, 10)
+  .then((hash) => {
+    user.password = hash;
+  })
+  .catch((err) => {
+    throw new Error();
+  }));
 
 module.exports = User;
-const Chat = require("./chat.js");
+const Chat = require('./chat.js');
+
 User.hasMany(Chat);
-
-
-
