@@ -1,25 +1,25 @@
 const { validationResult } = require('express-validator');
 const UserService = require('../services/userService.js');
 
-exports.create = (request, response) => {
-  response.render('registration.hbs', {
+exports.create = (req, res) => {
+  res.render('registration.hbs', {
     title: 'Registration',
   });
 };
 
-exports.store = (request, response) => {
-  const errors = validationResult(request);
+exports.store = (req, res) => {
+  const errors = validationResult(req);
 
-  const { login } = request.body;
-  const { password } = request.body;
+  const { login } = req.body;
+  const { password } = req.body;
 
   if (errors.isEmpty()) {
     UserService.create(login, password).then((user) => {
-      request.session.user_id = user.id;
-      response.redirectToRoute('chat');
+      req.session.user_id = user.id;
+      res.redirectToRoute('chat');
     });
   } else {
-    response.render('registration.hbs', {
+    res.render('registration.hbs', {
       title: 'Registration',
       login,
       password,
@@ -28,25 +28,25 @@ exports.store = (request, response) => {
   }
 };
 
-exports.login = (request, response) => {
-  response.render('login.hbs', {
+exports.login = (req, res) => {
+  res.render('login.hbs', {
     title: 'Log in',
   });
 };
 
-exports.auth = (request, response) => {
-  const errors = validationResult(request);
+exports.auth = (req, res) => {
+  const errors = validationResult(req);
 
-  const { login } = request.body;
-  const { password } = request.body;
+  const { login } = req.body;
+  const { password } = req.body;
 
   if (errors.isEmpty()) {
     UserService.findByLogin(login).then((user) => {
-      request.session.user_id = user.id;
-      response.redirectToRoute('chat');
+      req.session.user_id = user.id;
+      res.redirectToRoute('chat');
     });
   } else {
-    response.render('login.hbs', {
+    res.render('login.hbs', {
       title: 'Log in',
       login,
       password,

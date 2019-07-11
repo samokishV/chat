@@ -3,40 +3,40 @@ const MessageService = require('../services/messageService');
 const ChatService = require('../services/chatService');
 
 
-exports.index = async (request, response) => {
-  const chatId = request.params.id;
+exports.index = async (req, res) => {
+  const chatId = req.params.id;
 
   const chat = await ChatService.findById(chatId);
   const pageTitle = chat.title;
 
   const messages = await MessageService.getByChatId(chatId);
 
-  response.render('chatPage.hbs', {
+  res.render('chatPage.hbs', {
     title: pageTitle,
     messages,
     room: chatId,
   });
 };
 
-exports.create = async (request, response) => {
-  const chatId = request.params.id;
-  const userId = request.session.user_id;
-  const {message} = request.body;
+exports.create = async (req, res) => {
+  const chatId = req.params.id;
+  const userId = req.session.user_id;
+  const {message} = req.body;
 
-  const errors = validationResult(request);
+  const errors = validationResult(req);
 
   if (errors.isEmpty()) {
     MessageService.create(chatId, message, userId).then(async (result) => {
       const message = await MessageService.getById(result.id);
-      response.send(message);
+      res.send(message);
     });
   }
 };
 
-exports.getPartial = (request, response) => {
-  const message = JSON.parse(request.body.message);
+exports.getPartial = (req, res) => {
+  const message = JSON.parse(req.body.message);
 
-  response.render('partials/userMessage.hbs', {
+  res.render('partials/userMessage.hbs', {
     message,
     layout: false,
   });
