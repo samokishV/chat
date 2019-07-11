@@ -62,7 +62,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(session({
   secret: 'keyboard cat',
-  cookie: {},
+  cookie: {maxAge: 7*24*60*60*1000},
   store: new RedisStore({
     host: sessHost, port: sessPort, client, ttl: sessTtl,
   }),
