@@ -1,6 +1,6 @@
 $(document).ready(function() {
     const socket = io();
-    const message = $('#message');
+    const messageEl = $('#message');
 
     let roomName = $('#roomName').val();
     socket.emit('room', {room: roomName});
@@ -8,19 +8,24 @@ $(document).ready(function() {
     $('form').submit(async function (e) {
         e.preventDefault();
 
-        let type = 'POST';
-        let href = $(this).attr('action');
-        let str = $(this).serialize();
+        let message = messageEl.val();
+        message = message.trim();
 
-        let response = await request(type, href, str, function (result) {
-            return result;
-        });
+        if(message) {
+            let type = 'POST';
+            let href = $(this).attr('action');
+            let str = $(this).serialize();
 
-        if (response) {
-            socket.emit('messageCreate', {message: response, room: roomName});
+            let response = await request(type, href, str, function (result) {
+                return result;
+            });
+
+            if (response) {
+                socket.emit('messageCreate', {message: response, room: roomName});
+            }
         }
 
-        message.val(' ');
+        messageEl.val(' ');
         return false;
     });
 

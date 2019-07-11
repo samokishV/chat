@@ -27,7 +27,7 @@ ChatService.getFullInfo = async () => {
     order: [
       ['createdAt', 'ASC'],
     ],
-  }).then(chats => JSON.parse(JSON.stringify(chats)));
+  }).then(chat => JSON.parse(JSON.stringify(chat)));
 
   const count = await MessageService.countMessagesInChats();
 
