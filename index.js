@@ -15,7 +15,7 @@ const io = require('socket.io')(http);
 const config = require('config');
 const equalHelper = require('./helpers/equalHelper');
 const auth = require('./middleware/auth');
-const userController = require('./controllers/userController');
+const authController = require('./controllers/authController');
 const chatController = require('./controllers/chatController');
 const messageController = require('./controllers/messageController');
 const validate = require('./requests/validation');
@@ -72,13 +72,13 @@ app.use(session({
 
 app.use(['/chat', '/chat/:id'], auth.isAuthenticated);
 
-app.get('register', '/register', userController.create);
+app.get('register', '/register', authController.create);
 
-app.post('/register', validate.registration, userController.store);
+app.post('/register', validate.registration, authController.store);
 
-app.get('login', '/login', userController.login);
+app.get('login', '/login', authController.login);
 
-app.post('/login', validate.login, userController.auth);
+app.post('/login', validate.login, authController.auth);
 
 app.get('/', auth.isAuthenticated, chatController.index);
 
