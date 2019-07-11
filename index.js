@@ -84,7 +84,7 @@ app.get('/', auth.isAuthenticated, chatController.index);
 
 app.get('chat', '/chat', chatController.index);
 
-app.post('/chat', validate.chatStore, chatController.create);
+app.post(['/', '/chat'], validate.chatStore, chatController.create);
 
 app.delete('/chat/:id', chatController.delete);
 
