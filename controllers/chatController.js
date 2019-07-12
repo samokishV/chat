@@ -24,8 +24,7 @@ exports.create = async (req, res) => {
 
   if (errors.isEmpty()) {
     ChatService.create(title, userId).then(async (result) => {
-      let chat = await ChatService.findById(result.id);
-      res.send(chat);
+      res.send(result);
     });
   }
 };

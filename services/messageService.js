@@ -14,7 +14,7 @@ MessageService.create = (chatId, message, userId) => Message.create({
   chatId,
   message,
   userId,
-});
+}).then(result => MessageService.getById(result.id));
 
 /**
  * @param {number} id

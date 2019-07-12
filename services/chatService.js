@@ -13,7 +13,7 @@ const ChatService = {};
 ChatService.create = (title, userId) => Chat.create({
   title,
   userId,
-});
+}).then(result => ChatService.findById(result.id));
 
 /**
  * @returns Promise

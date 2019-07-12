@@ -28,8 +28,7 @@ exports.create = async (req, res) => {
 
   if (errors.isEmpty()) {
     MessageService.create(chatId, message, userId).then(async (result) => {
-      let message = await MessageService.getById(result.id);
-      res.send(message);
+      res.send(result);
     });
   }
 };
