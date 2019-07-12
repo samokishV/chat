@@ -15,6 +15,7 @@ exports.index = async (req, res) => {
     title: pageTitle,
     messages,
     room: chatId,
+    auth: true
   });
 };
 

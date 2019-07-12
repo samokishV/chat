@@ -67,6 +67,7 @@ app.use(session({
     host: sessHost, port: sessPort, client, ttl: sessTtl,
   }),
   resave: false,
+  rolling: true,
   saveUninitialized: true,
 }));
 
@@ -79,6 +80,8 @@ app.post('/register', validate.registration, authController.store);
 app.get('login', '/login', authController.login);
 
 app.post('/login', validate.login, authController.auth);
+
+app.get('logout', '/logout', authController.logout);
 
 app.get('/', auth.isAuthenticated, chatController.index);
 

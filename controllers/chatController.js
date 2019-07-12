@@ -13,6 +13,7 @@ exports.index = async (req, res) => {
     title: 'Chats',
     chats,
     login: user.login,
+    auth: true
   });
 };
 
