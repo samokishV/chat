@@ -1,6 +1,7 @@
 const Chat = require('../models/chat.js');
 const User = require('../models/user.js');
-const MessageService = require('../services/messageService');
+const Message = require('../models/message.js');
+const Sequelize = require('sequelize');
 
 const ChatService = {};
 
@@ -19,23 +20,21 @@ ChatService.create = (title, userId) => Chat.create({
  */
 ChatService.getFullInfo = async () => {
   let chats = await Chat.findAll({
-    attributes: ['id', 'title', 'createdAt'],
-    include: [{
-      model: User,
-      attributes: ['login'],
-    }],
-    order: [
-      ['createdAt', 'ASC'],
-    ],
-  }).then(chat => JSON.parse(JSON.stringify(chat)));
-
-  let count = await MessageService.countMessagesInChats();
-
-  // set value for virtual count property
-  count.forEach((number) => {
-    let obj = chats.find(obj => obj.id === number.chatId);
-    obj.count = number.count;
-  });
+      attributes: ['id', 'title', 'createdAt',
+        [Sequelize.fn('count', Sequelize.col('messages.message')), 'count']
+      ],
+      include: [{
+        model: User,
+        attributes: ['login'],
+      }, {
+        model: Message,
+        attributes: ['id', 'message']
+      }],
+      order: [
+        ['createdAt', 'ASC'],
+      ],
+      group: [Sequelize.col('chat.id'), Sequelize.col('messages.id')]
+    });
 
   return chats;
 };
@@ -47,20 +46,18 @@ ChatService.getFullInfo = async () => {
 ChatService.findById = async (id) => {
   let chat = await Chat.findOne({
     where: { id },
-    attributes: ['id', 'title', 'createdAt'],
+    attributes: ['id', 'title', 'createdAt',
+       [Sequelize.fn('count', Sequelize.col('messages.message')), 'count']
+    ],
     include: [{
       model: User,
       attributes: ['login'],
+    }, {
+        model: Message,
+        attributes: ['id', 'message']
     }],
-  }).then(chat => JSON.parse(JSON.stringify(chat)));
-
-  let count = await MessageService.countMessagesInChat(id);
-
-  if (count.length > 0) {
-    chat.count = count;
-  } else {
-    chat.count = 0;
-  }
+    group: [Sequelize.col('chat.id'), Sequelize.col('messages.id')]
+  });
 
   return chat;
 };

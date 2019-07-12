@@ -17,26 +17,6 @@ MessageService.create = (chatId, message, userId) => Message.create({
 });
 
 /**
- * @returns Promise
- */
-MessageService.countMessagesInChats = () => Message.findAll({
-  raw: true,
-  attributes: ['chatId', [Sequelize.fn('count', Sequelize.col('chatId')), 'count']],
-  group: ['chatId'],
-}).then(result => result);
-
-/**
- * @param {number} id
- * @returns Promise
- */
-MessageService.countMessagesInChat = id => Message.findAll({
-  where: { chatId: id },
-  raw: true,
-  attributes: ['chatId', [Sequelize.fn('count', Sequelize.col('chatId')), 'count']],
-  group: ['chatId'],
-}).then(result => result);
-
-/**
  * @param {number} id
  */
 MessageService.getByChatId = id => Message.findAll({

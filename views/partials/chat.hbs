@@ -7,10 +7,9 @@
     </td>
     <td>{{chat.user.login}}</td>
     <td class="number">
-
-        {{#if count}}
-        {{chat.count}}
-        {{else}} 0
+        {{#if chat.count}}
+            {{chat.messages.length}}
+            {{else}} 0
         {{/if}}
     </td>
     <td>{{chat.createdAt}}</td>
