@@ -18,7 +18,7 @@ ChatService.create = (title, userId) => Chat.create({
  * @returns Promise
  */
 ChatService.getFullInfo = async () => {
-  const chats = await Chat.findAll({
+  let chats = await Chat.findAll({
     attributes: ['id', 'title', 'createdAt'],
     include: [{
       model: User,
@@ -29,11 +29,11 @@ ChatService.getFullInfo = async () => {
     ],
   }).then(chat => JSON.parse(JSON.stringify(chat)));
 
-  const count = await MessageService.countMessagesInChats();
+  let count = await MessageService.countMessagesInChats();
 
   // set value for virtual count property
   count.forEach((number) => {
-    const obj = chats.find(obj => obj.id === number.chatId);
+    let obj = chats.find(obj => obj.id === number.chatId);
     obj.count = number.count;
   });
 
@@ -45,7 +45,7 @@ ChatService.getFullInfo = async () => {
  * @returns Promise
  */
 ChatService.findById = async (id) => {
-  const chat = await Chat.findOne({
+  let chat = await Chat.findOne({
     where: { id },
     attributes: ['id', 'title', 'createdAt'],
     include: [{
@@ -54,7 +54,7 @@ ChatService.findById = async (id) => {
     }],
   }).then(chat => JSON.parse(JSON.stringify(chat)));
 
-  const count = await MessageService.countMessagesInChat(id);
+  let count = await MessageService.countMessagesInChat(id);
 
   if (count.length > 0) {
     chat.count = count;

@@ -25,11 +25,11 @@ const Message = sequelize.define('message', {
 }, {
   getterMethods: {
     message() {
-      const message = this.getDataValue('message');
+      let message = this.getDataValue('message');
       return decode(message);
     },
     createdAt() {
-      const createdAt = this.getDataValue('createdAt');
+      let createdAt = this.getDataValue('createdAt');
       return dayjs(createdAt).format('DD-MM-YYYY HH:mm:ss');
     },
   },

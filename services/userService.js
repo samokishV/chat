@@ -29,7 +29,7 @@ UserService.loginExists = login => User.findOne({
  * @returns Promise
  */
 UserService.passwordExists = async (login, password) => {
-  const user = await UserService.findByLogin(login);
+  let user = await UserService.findByLogin(login);
   if (user) {
     return UserService.passwordsIsEqual(password, user.password);
   }

@@ -8,10 +8,10 @@ exports.create = (req, res) => {
 };
 
 exports.store = (req, res) => {
-  const errors = validationResult(req);
+  let errors = validationResult(req);
 
-  const { login } = req.body;
-  const { password } = req.body;
+  let { login } = req.body;
+  let { password } = req.body;
 
   if (errors.isEmpty()) {
     UserService.create(login, password).then((user) => {
@@ -35,10 +35,10 @@ exports.login = (req, res) => {
 };
 
 exports.auth = (req, res) => {
-  const errors = validationResult(req);
+  let errors = validationResult(req);
 
-  const { login } = req.body;
-  const { password } = req.body;
+  let { login } = req.body;
+  let { password } = req.body;
 
   if (errors.isEmpty()) {
     UserService.findByLogin(login).then((user) => {

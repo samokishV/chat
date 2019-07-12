@@ -25,11 +25,11 @@ const Chat = sequelize.define('chat', {
 }, {
   getterMethods: {
     title() {
-      const title = this.getDataValue('title');
+      let title = this.getDataValue('title');
       return decode(title);
     },
     createdAt() {
-      const createdAt = this.getDataValue('createdAt');
+      let createdAt = this.getDataValue('createdAt');
       return dayjs(createdAt).format('DD-MM-YYYY HH:mm:ss');
     },
   },

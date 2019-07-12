@@ -21,7 +21,7 @@ const User = sequelize.define('user', {
 }, {
   getterMethods: {
     login() {
-      const login = this.getDataValue('login');
+      let login = this.getDataValue('login');
       return decode(login);
     },
   },

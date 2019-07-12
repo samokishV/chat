@@ -29,7 +29,7 @@ exports.login = [
 
   check('password')
     .custom((password, { req }) => {
-      const { login } = req.body;
+      let { login } = req.body;
       return UserService.passwordExists(login, password).then((user) => {
         if (!user) {
           return Promise.reject();

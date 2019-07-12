@@ -4,12 +4,12 @@ const ChatService = require('../services/chatService');
 
 
 exports.index = async (req, res) => {
-  const chatId = req.params.id;
+  let chatId = req.params.id;
 
-  const chat = await ChatService.findById(chatId);
-  const pageTitle = chat.title;
+  let chat = await ChatService.findById(chatId);
+  let pageTitle = chat.title;
 
-  const messages = await MessageService.getByChatId(chatId);
+  let messages = await MessageService.getByChatId(chatId);
 
   res.render('chatPage.hbs', {
     title: pageTitle,
@@ -20,22 +20,22 @@ exports.index = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const chatId = req.params.id;
+  let chatId = req.params.id;
   let userId = req.cookies['user_id'];
-  const {message} = req.body;
+  let {message} = req.body;
 
-  const errors = validationResult(req);
+  let errors = validationResult(req);
 
   if (errors.isEmpty()) {
     MessageService.create(chatId, message, userId).then(async (result) => {
-      const message = await MessageService.getById(result.id);
+      let message = await MessageService.getById(result.id);
       res.send(message);
     });
   }
 };
 
 exports.getPartial = (req, res) => {
-  const message = JSON.parse(req.body.message);
+  let message = JSON.parse(req.body.message);
 
   res.render('partials/userMessage.hbs', {
     message,

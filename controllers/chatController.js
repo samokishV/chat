@@ -4,9 +4,9 @@ const UserService = require('../services/userService.js');
 
 
 exports.index = async (req, res) => {
-  const chats = await ChatService.getFullInfo();
+  let chats = await ChatService.getFullInfo();
   let userId = req.cookies['user_id'];
-  const user = await UserService.findById(userId);
+  let user = await UserService.findById(userId);
 
   res.render('chat.hbs', {
     title: 'Chats',
@@ -17,21 +17,21 @@ exports.index = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { title } = req.body;
+  let { title } = req.body;
   let userId = req.cookies['user_id'];
 
-  const errors = validationResult(req);
+  let errors = validationResult(req);
 
   if (errors.isEmpty()) {
     ChatService.create(title, userId).then(async (result) => {
-      const chat = await ChatService.findById(result.id);
+      let chat = await ChatService.findById(result.id);
       res.send(chat);
     });
   }
 };
 
 exports.delete = async (req, res) => {
-  const chatId = req.params.id;
+  let chatId = req.params.id;
 
   ChatService.deleteById(chatId).then(
     res.send({ id: chatId })
@@ -39,8 +39,8 @@ exports.delete = async (req, res) => {
 };
 
 exports.getPartial = (req, res) => {
-  const chat = JSON.parse(req.body.chat);
-  const { login } = req.body;
+  let chat = JSON.parse(req.body.chat);
+  let { login } = req.body;
 
   res.render('partials/chat.hbs', {
     chat,
