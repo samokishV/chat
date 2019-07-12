@@ -64,4 +64,8 @@ $(function () {
 
         numberEl[0].innerHTML = count + 1;
     });
+
+    if(performance.navigation.type === 2){
+        location.reload(true);
+    }
 });
