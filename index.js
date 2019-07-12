@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const app = express();
 
 const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const redis = require('redis');
 const RedisStore = require('connect-redis')(session);
 
@@ -70,6 +71,8 @@ app.use(session({
   rolling: true,
   saveUninitialized: true,
 }));
+
+app.use(cookieParser("secretSign#143_!223"));
 
 app.use(['/chat', '/chat/:id'], auth.isAuthenticated);
 

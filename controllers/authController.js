@@ -15,7 +15,7 @@ exports.store = (req, res) => {
 
   if (errors.isEmpty()) {
     UserService.create(login, password).then((user) => {
-      req.session.user_id = user.id;
+      res.cookie("user_id", user.id);
       res.redirectToRoute('chat');
     });
   } else {
@@ -42,7 +42,7 @@ exports.auth = (req, res) => {
 
   if (errors.isEmpty()) {
     UserService.findByLogin(login).then((user) => {
-      req.session.user_id = user.id;
+      res.cookie("user_id", user.id);
       res.redirectToRoute('chat');
     });
   } else {
@@ -56,6 +56,6 @@ exports.auth = (req, res) => {
 };
 
 exports.logout = (req, res) => {
-  req.session.destroy();
+  res.clearCookie("user_id");
   res.redirectToRoute('login');
 };

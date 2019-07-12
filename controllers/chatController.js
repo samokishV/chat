@@ -5,8 +5,7 @@ const UserService = require('../services/userService.js');
 
 exports.index = async (req, res) => {
   const chats = await ChatService.getFullInfo();
-
-  const userId = req.session.user_id;
+  let userId = req.cookies['user_id'];
   const user = await UserService.findById(userId);
 
   res.render('chat.hbs', {
@@ -19,7 +18,7 @@ exports.index = async (req, res) => {
 
 exports.create = async (req, res) => {
   const { title } = req.body;
-  const userId = req.session.user_id;
+  let userId = req.cookies['user_id'];
 
   const errors = validationResult(req);
 

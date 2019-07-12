@@ -21,7 +21,7 @@ exports.index = async (req, res) => {
 
 exports.create = async (req, res) => {
   const chatId = req.params.id;
-  const userId = req.session.user_id;
+  let userId = req.cookies['user_id'];
   const {message} = req.body;
 
   const errors = validationResult(req);
