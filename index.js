@@ -38,24 +38,8 @@ app.engine('hbs', expressHbs({
   },
 }));
 
-io.on('connection', (socket) => {
-  socket.on('room', (data) => {
-    socket.join(data.room);
-  });
-
-  socket.on('chatCreate', (data) => {
-    io.emit('chatAdd', data);
-  });
-
-  socket.on('chatRemove', (data) => {
-    io.emit('chatDelete', data);
-  });
-
-  socket.on('messageCreate', (data) => {
-    io.emit('messageAddGlobal', data);
-    io.to(data.room).emit('messageAdd', data);
-  });
-});
+const consumer = require('./consumer.js');
+consumer.start(io);
 
 app.use(express.static('public'));
 
