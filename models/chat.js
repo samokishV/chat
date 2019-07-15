@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const dayjs = require('dayjs');
 const decode = require('unescape');
 const sequelize = require('./dbConnect');
+const logger = require('../logger.js');
 
 const Chat = sequelize.define('chat', {
   id: {
@@ -36,7 +37,10 @@ const Chat = sequelize.define('chat', {
 });
 
 sequelize.sync().then(result => console.log('Chat schema created successfully.'))
-  .catch(err => console.log(err));
+  .catch(err => {
+    console.log(err);
+    logger.error(`Error creating Chat schema`);
+  });
 
 module.exports = Chat;
 const User = require('./user.js');

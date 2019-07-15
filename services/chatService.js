@@ -1,7 +1,8 @@
+const Sequelize = require('sequelize');
 const Chat = require('../models/chat.js');
 const User = require('../models/user.js');
 const Message = require('../models/message.js');
-const Sequelize = require('sequelize');
+const logger = require('../logger.js');
 
 const ChatService = {};
 
@@ -13,54 +14,65 @@ const ChatService = {};
 ChatService.create = (title, userId) => Chat.create({
   title,
   userId,
-}).then(result => ChatService.findById(result.id));
+}).then(
+  result => ChatService.findById(result.id),
+).catch(
+  (err) => {
+    console.log(err);
+    logger.error(`Error creating new chat: title ${title}, userId ${userId} in ChatService.create`);
+  },
+);
 
 /**
  * @returns Promise
  */
-ChatService.getFullInfo = async () => {
-  let chats = await Chat.findAll({
-      attributes: ['id', 'title', 'createdAt',
-        [Sequelize.fn('count', Sequelize.col('messages.message')), 'count']
-      ],
-      include: [{
-        model: User,
-        attributes: ['login'],
-      }, {
-        model: Message,
-        attributes: ['id', 'message']
-      }],
-      order: [
-        ['createdAt', 'ASC'],
-      ],
-      group: [Sequelize.col('chat.id'), Sequelize.col('messages.id')]
-    });
+ChatService.getFullInfo =  () => Chat.findAll({
+  attributes: ['id', 'title', 'createdAt',
+    [Sequelize.fn('count', Sequelize.col('messages.message')), 'count'],
+  ],
+  include: [{
+    model: User,
+    attributes: ['login'],
+  }, {
+    model: Message,
+    attributes: ['id', 'message'],
+  }],
+  order: [
+    ['createdAt', 'ASC'],
+  ],
+  group: [Sequelize.col('chat.id'), Sequelize.col('messages.id')],
+}).catch(
+  (err) => {
+    console.log(err);
+    logger.error('Error finding chats in ChatService.getFullInfo()');
+  },
+);
 
-  return chats;
-};
 
 /**
  * @param {number} id
  * @returns Promise
  */
-ChatService.findById = async (id) => {
-  let chat = await Chat.findOne({
-    where: { id },
-    attributes: ['id', 'title', 'createdAt',
-       [Sequelize.fn('count', Sequelize.col('messages.message')), 'count']
-    ],
-    include: [{
-      model: User,
-      attributes: ['login'],
-    }, {
-        model: Message,
-        attributes: ['id', 'message']
-    }],
-    group: [Sequelize.col('chat.id'), Sequelize.col('messages.id')]
-  });
+ChatService.findById = (id) => Chat.findOne({
+  where: { id },
+  attributes: ['id', 'title', 'createdAt',
+    [Sequelize.fn('count', Sequelize.col('messages.message')), 'count'],
+  ],
+  include: [{
+    model: User,
+    attributes: ['login'],
+  }, {
+    model: Message,
+    attributes: ['id', 'message'],
+  }],
+  group: [Sequelize.col('chat.id'), Sequelize.col('messages.id')],
+}).catch(
+  (err) => {
+    console.log(err);
+    logger.error(`Error finding chat: id ${id} in ChatService.findById()`);
+  },
+);
 
-  return chat;
-};
 
 /**
  * param {number} id
@@ -68,7 +80,12 @@ ChatService.findById = async (id) => {
  */
 ChatService.exists = id => Chat.findOne({
   where: { id },
-});
+}).catch(
+  (err) => {
+    console.log(err);
+    logger.error(`Error finding chat: id ${id} in ChatService.exists()`);
+  },
+);
 
 /**
  * @param {number} id
@@ -76,6 +93,11 @@ ChatService.exists = id => Chat.findOne({
  */
 ChatService.deleteById = id => Chat.destroy({
   where: { id },
-});
+}).catch(
+  (err) => {
+    console.log(err);
+    logger.error(`Error destroying chat: id ${id} in ChatService.deleteById()`);
+  },
+);
 
 module.exports = ChatService;

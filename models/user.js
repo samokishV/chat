@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
 const decode = require('unescape');
 const sequelize = require('./dbConnect');
+const logger = require('../logger.js');
 
 const User = sequelize.define('user', {
   id: {
@@ -28,7 +29,10 @@ const User = sequelize.define('user', {
 });
 
 sequelize.sync().then(result => console.log('User schema created successfully.'))
-  .catch(err => console.log(err));
+  .catch(err => {
+    console.log(err);
+    logger.error(`Error creating User schema`);
+  });
 
 User.beforeCreate((user, options) => bcrypt.hash(user.password, 10)
   .then((hash) => {

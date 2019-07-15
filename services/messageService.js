@@ -1,6 +1,6 @@
-const Sequelize = require('sequelize');
 const Message = require('../models/message.js');
 const User = require('../models/user.js');
+const logger = require('../logger.js');
 
 const MessageService = {};
 
@@ -14,7 +14,14 @@ MessageService.create = (chatId, message, userId) => Message.create({
   chatId,
   message,
   userId,
-}).then(result => MessageService.getById(result.id));
+}).then(
+  result => MessageService.getById(result.id),
+).catch(
+  (err) => {
+    console.log(err);
+    logger.error(`Error creating message: chatId ${chatId}, message ${message}, userId ${userId} in MessageService.create()`);
+  },
+);
 
 /**
  * @param {number} id
@@ -28,7 +35,12 @@ MessageService.getByChatId = id => Message.findAll({
   order: [
     ['createdAt', 'ASC'],
   ],
-});
+}).catch(
+  (err) => {
+    console.log(err);
+    logger.error(`Error finding message: chatId ${id} in MessageService.getByChatId()`);
+  },
+);
 
 /**
  * @param id
@@ -40,6 +52,11 @@ MessageService.getById = id => Message.findOne({
     model: User,
     attributes: ['login'],
   }],
-});
+}).catch(
+  (err) => {
+    console.log(err);
+    logger.error(`Error finding message: id ${id} in MessageService.getById()`);
+  },
+);
 
 module.exports = MessageService;

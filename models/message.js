@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const dayjs = require('dayjs');
 const decode = require('unescape');
 const sequelize = require('./dbConnect');
+const logger = require('../logger.js');
 
 const Message = sequelize.define('message', {
   id: {
@@ -36,7 +37,10 @@ const Message = sequelize.define('message', {
 });
 
 sequelize.sync().then(result => console.log('Message schema created successfully.'))
-  .catch(err => console.log(err));
+  .catch(err => {
+    console.log(err);
+    logger.error(`Error creating Message schema`);
+  });
 
 module.exports = Message;
 const User = require('./user.js');
