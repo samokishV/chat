@@ -12,6 +12,8 @@ $(document).ready(function() {
         message = message.trim();
 
         if(message) {
+            messageEl.removeClass('is-invalid');
+
             let type = 'POST';
             let href = $(this).attr('action');
             let str = $(this).serialize();
@@ -23,6 +25,8 @@ $(document).ready(function() {
             if (response) {
                 socket.emit('messageCreate', {message: response, room: roomName});
             }
+        } else {
+            messageEl.addClass('is-invalid');
         }
 
         messageEl.val(' ');

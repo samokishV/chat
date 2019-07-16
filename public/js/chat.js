@@ -1,23 +1,34 @@
 $(function () {
     const socket = io();
-    const title = $('#title');
+    const titleEl = $('#title');
 
     $('form').submit(async function(e){
         e.preventDefault();
 
-        let type = 'POST';
-        let href = $(this).attr('action');
-        let str = $(this).serialize();
+        let title = titleEl.val();
+        title = title.trim();
 
-        let response = await request(type, href, str, function(result) {
-            return result;
-        });
+        if(title) {
+            titleEl.removeClass('is-invalid');
 
-        if(response) {
-            socket.emit('chatCreate', {chat: response});
+            let type = 'POST';
+            let href = $(this).attr('action');
+            let str = $(this).serialize();
+
+            let response = await request(type, href, str, function (result) {
+                return result;
+            });
+
+            if (response) {
+                socket.emit('chatCreate', {chat: response});
+            }
+        } else {
+            titleEl.addClass('is-invalid');
         }
 
-        title.val(' ');
+        titleEl.val(' ');
+
+        return false;
     });
 
     socket.on('chatAdd', async function(data){
