@@ -39,6 +39,7 @@ app.engine('hbs', expressHbs({
 }));
 
 const consumer = require('./consumer.js');
+
 consumer.start(io);
 
 app.use(express.static('public'));
@@ -47,7 +48,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(session({
   secret: 'keyboard cat',
-  cookie: {maxAge: 7*24*60*60*1000},
+  cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 },
   store: new RedisStore({
     host: sessHost, port: sessPort, client, ttl: sessTtl,
   }),
@@ -56,7 +57,7 @@ app.use(session({
   saveUninitialized: true,
 }));
 
-app.use(cookieParser("secretSign#143_!223"));
+app.use(cookieParser('secretSign#143_!223'));
 
 app.use(['/chat', '/chat/:id'], auth.isAuthenticated);
 

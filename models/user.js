@@ -22,16 +22,16 @@ const User = sequelize.define('user', {
 }, {
   getterMethods: {
     login() {
-      let login = this.getDataValue('login');
+      const login = this.getDataValue('login');
       return decode(login);
     },
   },
 });
 
 sequelize.sync().then(result => console.log('User schema created successfully.'))
-  .catch(err => {
+  .catch((err) => {
     console.log(err);
-    logger.error(`Error creating User schema`);
+    logger.error('Error creating User schema');
   });
 
 User.beforeCreate((user, options) => bcrypt.hash(user.password, 10)

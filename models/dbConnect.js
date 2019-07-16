@@ -10,7 +10,7 @@ const driver = config.get('dbConfig.dbDriver');
 
 const sequelize = new Sequelize(dbName, username, password, {
   dialect: driver,
-  host
+  host,
 });
 
 module.exports = sequelize;

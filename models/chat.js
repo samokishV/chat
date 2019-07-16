@@ -26,20 +26,20 @@ const Chat = sequelize.define('chat', {
 }, {
   getterMethods: {
     title() {
-      let title = this.getDataValue('title');
+      const title = this.getDataValue('title');
       return decode(title);
     },
     createdAt() {
-      let createdAt = this.getDataValue('createdAt');
+      const createdAt = this.getDataValue('createdAt');
       return dayjs(createdAt).format('DD-MM-YYYY HH:mm:ss');
     },
   },
 });
 
 sequelize.sync().then(result => console.log('Chat schema created successfully.'))
-  .catch(err => {
+  .catch((err) => {
     console.log(err);
-    logger.error(`Error creating Chat schema`);
+    logger.error('Error creating Chat schema');
   });
 
 module.exports = Chat;

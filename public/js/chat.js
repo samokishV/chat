@@ -1,82 +1,76 @@
-$(function () {
-    const socket = io();
-    const titleEl = $('#title');
+$(() => {
+  const socket = io();
+  const titleEl = $('#title');
 
-    $('form').submit(async function(e){
-        e.preventDefault();
+  $('form').submit(async function (e) {
+    e.preventDefault();
 
-        let title = titleEl.val();
-        title = title.trim();
+    let title = titleEl.val();
+    title = title.trim();
 
-        if(title) {
-            titleEl.removeClass('is-invalid');
+    if (title) {
+      titleEl.removeClass('is-invalid');
 
-            let type = 'POST';
-            let href = $(this).attr('action');
-            let str = $(this).serialize();
+      const type = 'POST';
+      const href = $(this).attr('action');
+      const str = $(this).serialize();
 
-            let response = await request(type, href, str, function (result) {
-                return result;
-            });
+      const response = await request(type, href, str, result => result);
 
-            if (response) {
-                socket.emit('chatCreate', {chat: response});
-            }
-        } else {
-            titleEl.addClass('is-invalid');
-        }
-
-        titleEl.val(' ');
-
-        return false;
-    });
-
-    socket.on('chatAdd', async function(data){
-        let login = document.getElementById('login').innerText;
-        let chat = data.chat;
-
-        let type = 'POST';
-        let href = '/chat-row-template';
-        let str = {login: login, chat: JSON.stringify(chat)};
-
-        let response = await request(type, href, str, function(result) {
-            return result;
-        });
-
-        $("table").append(response);
-    });
-
-    $('#chats').on('click', '.chatDelete', async function(e) {
-        e.preventDefault();
-
-        let type = 'DELETE';
-        let href = $(this).attr('href');
-        let str = {};
-
-        let response = await request(type, href, str, function(result) {
-            return result;
-        });
-
-        if(response) {
-            socket.emit('chatRemove', {id: response.id});
-        }
-
-        return false;
-    });
-
-    socket.on('chatDelete', function(data) {
-        $("#tr"+data.id).remove();
-    });
-
-    socket.on('messageAddGlobal', function(data) {
-        let chatId = data.message.chatId;
-        let numberEl = $("#tr"+ chatId +" .number");
-        let count = parseInt(numberEl[0].innerText);
-
-        numberEl[0].innerHTML = count + 1;
-    });
-
-    if(performance.navigation.type === 2){
-        location.reload(true);
+      if (response) {
+        socket.emit('chatCreate', { chat: response });
+      }
+    } else {
+      titleEl.addClass('is-invalid');
     }
+
+    titleEl.val(' ');
+
+    return false;
+  });
+
+  socket.on('chatAdd', async (data) => {
+    const login = document.getElementById('login').innerText;
+    const { chat } = data;
+
+    const type = 'POST';
+    const href = '/chat-row-template';
+    const str = { login, chat: JSON.stringify(chat) };
+
+    const response = await request(type, href, str, result => result);
+
+    $('table').append(response);
+  });
+
+  $('#chats').on('click', '.chatDelete', async function (e) {
+    e.preventDefault();
+
+    const type = 'DELETE';
+    const href = $(this).attr('href');
+    const str = {};
+
+    const response = await request(type, href, str, result => result);
+
+    if (response) {
+      socket.emit('chatRemove', { id: response.id });
+    }
+
+    return false;
+  });
+
+  socket.on('chatDelete', (data) => {
+    $(`#tr${data.id}`).remove();
+  });
+
+  socket.on('messageAddGlobal', (data) => {
+    const { chatId } = data.message;
+    const numberEl = $(`#tr${chatId} .number`);
+    const count = parseInt(numberEl[0].innerText);
+
+    numberEl[0].innerHTML = count + 1;
+  });
+
+  if (performance.navigation.type === 2) {
+    location.reload(true);
+  }
 });

@@ -26,20 +26,20 @@ const Message = sequelize.define('message', {
 }, {
   getterMethods: {
     message() {
-      let message = this.getDataValue('message');
+      const message = this.getDataValue('message');
       return decode(message);
     },
     createdAt() {
-      let createdAt = this.getDataValue('createdAt');
+      const createdAt = this.getDataValue('createdAt');
       return dayjs(createdAt).format('DD-MM-YYYY HH:mm:ss');
     },
   },
 });
 
 sequelize.sync().then(result => console.log('Message schema created successfully.'))
-  .catch(err => {
+  .catch((err) => {
     console.log(err);
-    logger.error(`Error creating Message schema`);
+    logger.error('Error creating Message schema');
   });
 
 module.exports = Message;

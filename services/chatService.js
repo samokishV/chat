@@ -26,7 +26,7 @@ ChatService.create = (title, userId) => Chat.create({
 /**
  * @returns Promise
  */
-ChatService.getFullInfo =  () => Chat.findAll({
+ChatService.getFullInfo = () => Chat.findAll({
   attributes: ['id', 'title', 'createdAt',
     [Sequelize.fn('count', Sequelize.col('messages.message')), 'count'],
   ],
@@ -53,7 +53,7 @@ ChatService.getFullInfo =  () => Chat.findAll({
  * @param {number} id
  * @returns Promise
  */
-ChatService.findById = (id) => Chat.findOne({
+ChatService.findById = id => Chat.findOne({
   where: { id },
   attributes: ['id', 'title', 'createdAt',
     [Sequelize.fn('count', Sequelize.col('messages.message')), 'count'],
