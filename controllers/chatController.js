@@ -37,7 +37,7 @@ exports.delete = async (req, res) => {
   );
 };
 
-exports.getPartial = (req, res) => {
+exports.renderTableRow = (req, res) => {
   let chat = JSON.parse(req.body.chat);
   let { login } = req.body;
 

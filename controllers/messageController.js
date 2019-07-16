@@ -33,7 +33,7 @@ exports.create = async (req, res) => {
   }
 };
 
-exports.getPartial = (req, res) => {
+exports.renderTableRow = (req, res) => {
   let message = JSON.parse(req.body.message);
 
   res.render('partials/userMessage.hbs', {

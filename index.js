@@ -60,13 +60,13 @@ app.use(cookieParser("secretSign#143_!223"));
 
 app.use(['/chat', '/chat/:id'], auth.isAuthenticated);
 
-app.get('register', '/register', authController.create);
+app.get('register', '/register', authController.showRegisterForm);
 
-app.post('/register', validate.registration, authController.store);
+app.post('/register', validate.registration, authController.register);
 
-app.get('login', '/login', authController.login);
+app.get('login', '/login', authController.showLoginForm);
 
-app.post('/login', validate.login, authController.auth);
+app.post('/login', validate.login, authController.login);
 
 app.get('logout', '/logout', authController.logout);
 
@@ -82,8 +82,8 @@ app.get('/chat/:id', messageController.index);
 
 app.post('/chat/:id', validate.messageStore, messageController.create);
 
-app.post('/chat-row-template', chatController.getPartial);
+app.post('/chat-row-template', chatController.renderTableRow);
 
-app.post('/message-row-template', messageController.getPartial);
+app.post('/message-row-template', messageController.renderTableRow);
 
 http.listen(port, host, () => {});

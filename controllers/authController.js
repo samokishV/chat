@@ -1,13 +1,13 @@
 const { validationResult } = require('express-validator');
 const UserService = require('../services/userService.js');
 
-exports.create = (req, res) => {
+exports.showRegisterForm = (req, res) => {
   res.render('registration.hbs', {
     title: 'Registration',
   });
 };
 
-exports.store = (req, res) => {
+exports.register = (req, res) => {
   let errors = validationResult(req);
 
   let { login } = req.body;
@@ -28,13 +28,13 @@ exports.store = (req, res) => {
   }
 };
 
-exports.login = (req, res) => {
+exports.showLoginForm = (req, res) => {
   res.render('login.hbs', {
     title: 'Log in',
   });
 };
 
-exports.auth = (req, res) => {
+exports.login = (req, res) => {
   let errors = validationResult(req);
 
   let { login } = req.body;
