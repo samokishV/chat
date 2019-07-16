@@ -82,8 +82,8 @@ app.get('/chat/:id', messageController.index);
 
 app.post('/chat/:id', validate.messageStore, messageController.create);
 
-app.post('/chat-row-template', chatController.renderTableRow);
+app.post('/chat-row-template', validate.chatTableRowData, chatController.renderTableRow);
 
-app.post('/message-row-template', messageController.renderTableRow);
+app.post('/message-row-template', validate.messageTableRowData, messageController.renderTableRow);
 
 http.listen(port, host, () => {});

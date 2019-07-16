@@ -1,5 +1,6 @@
 const { check } = require('express-validator');
 const UserService = require('../services/userService.js');
+const logger = require('../logger.js');
 
 exports.registration = [
   check('login')
@@ -54,3 +55,30 @@ exports.messageStore = [
     .not()
     .isEmpty(),
 ];
+
+exports.chatTableRowData = (req, res, next) => {
+  if(!req.body.login) {
+    console.log("login is required");
+    logger.error('Error adding row to chat table. Login is required in chatController.renderTableRow()');
+  } else {
+    try {
+      JSON.parse(req.body.chat);
+      return next();
+    } catch (e) {
+      console.log("not JSON chat");
+      logger.error('Error adding row to chat table. JSON data is required in chatController.renderTableRow()');
+    }
+  }
+};
+
+exports.messageTableRowData = (req, res, next) => {
+  try {
+    JSON.parse(req.body.message);
+    return next();
+  } catch (e) {
+    console.log("not JSON message");
+    logger.error('Error adding row to message table. JSON data is required in messageController.renderTableRow()');
+  }
+};
+
+
