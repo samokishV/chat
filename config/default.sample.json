@@ -1,18 +1,19 @@
 {
-    "dbConfig": {
-      "host": "127.0.0.1",
-      "dbName": "test",
-      "dbDriver": "mysql",
-      "username": "test",
-      "password": "secret"
-    },
-    "sessionConfig": {
-      "host": "127.0.0.1",
-      "port": 6379,
-      "ttl" :  260
-    },
-    "serverConfig": {
-      "host": "127.0.0.1",
-      "port": 3000
-    }
+  "envMode" : "development",
+  "dbConfig": {
+    "host": "127.0.0.1",
+    "dbName": "test",
+    "dbDriver": "mysql",
+    "username": "test",
+    "password": "secret"
+  },
+  "sessionConfig": {
+    "host": "127.0.0.1",
+    "port": 6379,
+    "ttl" :  260
+  },
+  "serverConfig": {
+    "host": "127.0.0.1",
+    "port": 3000
+  }
 }

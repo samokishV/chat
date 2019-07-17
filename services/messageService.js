@@ -18,7 +18,7 @@ MessageService.create = (chatId, message, userId) => Message.create({
   result => MessageService.getById(result.id),
 ).catch(
   (err) => {
-    console.log(err);
+    logger.debug(err);
     logger.error(`Error creating message: chatId ${chatId}, message ${message}, userId ${userId} in MessageService.create()`);
   },
 );
@@ -37,7 +37,7 @@ MessageService.getByChatId = id => Message.findAll({
   ],
 }).catch(
   (err) => {
-    console.log(err);
+    logger.debug(err);
     logger.error(`Error finding message: chatId ${id} in MessageService.getByChatId()`);
   },
 );
@@ -54,7 +54,7 @@ MessageService.getById = id => Message.findOne({
   }],
 }).catch(
   (err) => {
-    console.log(err);
+    logger.debug(err);
     logger.error(`Error finding message: id ${id} in MessageService.getById()`);
   },
 );

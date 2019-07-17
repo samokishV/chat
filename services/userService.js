@@ -14,7 +14,7 @@ UserService.create = (login, password) => User.create({
   password,
 }).catch(
   (err) => {
-    console.log(err);
+    logger.debug(err);
     logger.error(`Error creating user: login ${login}, password ${password} in UserService.create()`);
   },
 );
@@ -29,7 +29,7 @@ UserService.loginExists = login => User.findOne({
   if (user) return true;
 }).catch(
   (err) => {
-    console.log(err);
+    logger.debug(err);
     logger.error(`Error finding user: login ${login} in UserService.loginExists()`);
   },
 );
@@ -55,7 +55,7 @@ UserService.passwordsIsEqual = (password1, password2) => bcrypt.compare(password
   .then(res => res)
   .catch(
     (err) => {
-      console.log(err);
+      logger.debug(err);
       logger.error('Error comparing passwords in UserService.passwordsIsEqual()');
     },
   );
@@ -69,7 +69,7 @@ UserService.findByLogin = login => User.findOne({
 }).then(user => user)
   .catch(
     (err) => {
-      console.log(err);
+      logger.debug(err);
       logger.error(`Error finding user: login ${login} in UserService.findByLogin()`);
     },
   );
@@ -83,7 +83,7 @@ UserService.findById = id => User.findOne({
 }).then(user => user)
   .catch(
     (err) => {
-      console.log(err);
+      logger.debug(err);
       logger.error(`Error finding user: id ${id} in UserService.findById()`);
     },
   );

@@ -18,7 +18,7 @@ ChatService.create = (title, userId) => Chat.create({
   result => ChatService.findById(result.id),
 ).catch(
   (err) => {
-    console.log(err);
+    logger.debug(err);
     logger.error(`Error creating new chat: title ${title}, userId ${userId} in ChatService.create`);
   },
 );
@@ -43,7 +43,7 @@ ChatService.getFullInfo = () => Chat.findAll({
   group: [Sequelize.col('chat.id'), Sequelize.col('messages.id')],
 }).catch(
   (err) => {
-    console.log(err);
+    logger.debug(err);
     logger.error('Error finding chats in ChatService.getFullInfo()');
   },
 );
@@ -68,7 +68,7 @@ ChatService.findById = id => Chat.findOne({
   group: [Sequelize.col('chat.id'), Sequelize.col('messages.id')],
 }).catch(
   (err) => {
-    console.log(err);
+    logger.debug(err);
     logger.error(`Error finding chat: id ${id} in ChatService.findById()`);
   },
 );
@@ -82,7 +82,7 @@ ChatService.exists = id => Chat.findOne({
   where: { id },
 }).catch(
   (err) => {
-    console.log(err);
+    logger.debug(err);
     logger.error(`Error finding chat: id ${id} in ChatService.exists()`);
   },
 );
@@ -95,7 +95,7 @@ ChatService.deleteById = id => Chat.destroy({
   where: { id },
 }).catch(
   (err) => {
-    console.log(err);
+    logger.debug(err);
     logger.error(`Error destroying chat: id ${id} in ChatService.deleteById()`);
   },
 );

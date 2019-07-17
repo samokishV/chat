@@ -28,9 +28,9 @@ const User = sequelize.define('user', {
   },
 });
 
-sequelize.sync().then(() => console.log('User schema created successfully.'))
+sequelize.sync().then(() => logger.debug('User schema created successfully.'))
   .catch((err) => {
-    console.log(err);
+    logger.debug(err);
     logger.error('Error creating User schema');
   });
 
