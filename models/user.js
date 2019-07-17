@@ -28,18 +28,18 @@ const User = sequelize.define('user', {
   },
 });
 
-sequelize.sync().then(result => console.log('User schema created successfully.'))
+sequelize.sync().then(() => console.log('User schema created successfully.'))
   .catch((err) => {
     console.log(err);
     logger.error('Error creating User schema');
   });
 
-User.beforeCreate((user, options) => bcrypt.hash(user.password, 10)
+User.beforeCreate(user => bcrypt.hash(user.password, 10)
   .then((hash) => {
     user.password = hash;
   })
   .catch((err) => {
-    throw new Error();
+    throw new Error(err);
   }));
 
 module.exports = User;

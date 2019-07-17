@@ -5,6 +5,7 @@ $(document).ready(() => {
   const roomName = $('#roomName').val();
   socket.emit('room', { room: roomName });
 
+  // eslint-disable-next-line no-undef
   $('form').submit(async function (e) {
     e.preventDefault();
 
@@ -38,12 +39,14 @@ $(document).ready(() => {
     const href = '/message-row-template';
     const str = { message };
 
+    // eslint-disable-next-line no-undef
     const response = await request(type, href, str, result => result);
 
+    // eslint-disable-next-line no-undef
     $('table').append(response);
   });
 
-  socket.on('chatDelete', (data) => {
+  socket.on('chatDelete', () => {
     alert('Chat was closed!');
     window.location.href = '/chat';
   });

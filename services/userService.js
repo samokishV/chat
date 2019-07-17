@@ -51,7 +51,8 @@ UserService.passwordExists = async (login, password) => {
  * @param {string} password2
  * @returns Promise
  */
-UserService.passwordsIsEqual = (password1, password2) => bcrypt.compare(password1, password2).then(res => res)
+UserService.passwordsIsEqual = (password1, password2) => bcrypt.compare(password1, password2)
+  .then(res => res)
   .catch(
     (err) => {
       console.log(err);

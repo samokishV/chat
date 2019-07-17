@@ -71,6 +71,7 @@ exports.chatTableRowData = (req, res, next) => {
   }
 };
 
+// eslint-disable-next-line consistent-return
 exports.messageTableRowData = (req, res, next) => {
   try {
     JSON.parse(req.body.message);

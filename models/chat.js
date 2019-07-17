@@ -36,7 +36,7 @@ const Chat = sequelize.define('chat', {
   },
 });
 
-sequelize.sync().then(result => console.log('Chat schema created successfully.'))
+sequelize.sync().then(() => console.log('Chat schema created successfully.'))
   .catch((err) => {
     console.log(err);
     logger.error('Error creating Chat schema');

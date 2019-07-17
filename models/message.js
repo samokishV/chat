@@ -36,7 +36,7 @@ const Message = sequelize.define('message', {
   },
 });
 
-sequelize.sync().then(result => console.log('Message schema created successfully.'))
+sequelize.sync().then(() => console.log('Message schema created successfully.'))
   .catch((err) => {
     console.log(err);
     logger.error('Error creating Message schema');
