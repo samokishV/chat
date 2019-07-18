@@ -46,8 +46,10 @@ $(document).ready(() => {
     $('table').append(response);
   });
 
-  socket.on('chatDelete', () => {
-    alert('Chat was closed!');
-    window.location.href = '/chat';
+  socket.on('chatDelete', (data) => {
+    if(roomName === data.id) {
+      alert('Chat was closed!');
+      window.location.href = '/chat';
+    }
   });
 });
