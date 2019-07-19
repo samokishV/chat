@@ -2,7 +2,7 @@
 <div class="cover">
     <input id="roomName" type="hidden" value="{{room}}">
     <div class="inner-cover">
-        <table class="table" style="width: 800px;">
+        <table class="table">
             {{#if messages}}
                 {{#each messages}}
                     {{> userMessage message=this}}
