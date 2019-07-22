@@ -23,6 +23,8 @@ $(document).ready(() => {
 
       if (response) {
         socket.emit('messageCreate', { message: response, room: roomName });
+        const holder_elem = $("table");
+        View.messageAdd(holder_elem, response);
       }
     } else {
       messageEl.addClass('is-invalid');
@@ -33,17 +35,8 @@ $(document).ready(() => {
   });
 
   socket.on('messageAdd', async (data) => {
-    const message = JSON.stringify(data.message);
-
-    const type = 'POST';
-    const href = '/message-row-template';
-    const str = { message };
-
-    // eslint-disable-next-line no-undef
-    const response = await request(type, href, str, result => result);
-
-    // eslint-disable-next-line no-undef
-    $('table').append(response);
+    const holder_elem = $("table");
+    View.messageAdd(holder_elem, data.message);
   });
 
   socket.on('chatDelete', (data) => {
@@ -53,3 +46,4 @@ $(document).ready(() => {
     }
   });
 });
+

@@ -53,7 +53,5 @@ module.exports = {
     app.post('/chat/:id', validate.messageStore, messageController.create);
 
     app.post('/chat-row-template', validate.chatTableRowData, chatController.renderTableRow);
-
-    app.post('/message-row-template', validate.messageTableRowData, messageController.renderTableRow);
   },
 };

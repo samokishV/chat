@@ -68,13 +68,3 @@ exports.chatTableRowData = (req, res, next) => {
     }
   }
 };
-
-// eslint-disable-next-line consistent-return
-exports.messageTableRowData = (req, res, next) => {
-  try {
-    JSON.parse(req.body.message);
-    return next();
-  } catch (e) {
-    logger.error('Error adding row to message table. JSON data is required in messageController.renderTableRow()');
-  }
-};

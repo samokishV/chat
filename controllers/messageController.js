@@ -32,12 +32,3 @@ exports.create = async (req, res) => {
     });
   }
 };
-
-exports.renderTableRow = (req, res) => {
-  const message = JSON.parse(req.body.message);
-
-  res.render('partials/userMessage.hbs', {
-    message,
-    layout: false,
-  });
-};

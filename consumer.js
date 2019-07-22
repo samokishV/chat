@@ -15,7 +15,7 @@ module.exports = {
 
       socket.on('messageCreate', (data) => {
         io.emit('messageAddGlobal', data);
-        io.to(data.room).emit('messageAdd', data);
+        socket.broadcast.to(data.room).emit('messageAdd', data);
       });
     });
   },
