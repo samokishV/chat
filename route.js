@@ -1,13 +1,13 @@
 const express = require('express');
 const expressHbs = require('express-handlebars');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const authController = require('./controllers/authController');
 const chatController = require('./controllers/chatController');
 const messageController = require('./controllers/messageController');
 const validate = require('./requests/validation');
 const auth = require('./middleware/auth');
 const equalHelper = require('./helpers/equalHelper');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
 
 module.exports = {
   start(app) {
@@ -25,9 +25,9 @@ module.exports = {
     app.use(express.static('public'));
 
     app.use(bodyParser.urlencoded({ extended: false }));
-    
+
     app.use(cookieParser('secretSign#143_!223'));
-    
+
     app.use(['/chat', '/chat/:id'], auth.isAuthenticated);
 
     app.get('register', '/register', authController.showRegisterForm);

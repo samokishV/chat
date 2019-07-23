@@ -19,9 +19,9 @@ $(() => {
 
       if (response) {
         socket.emit('chatCreate', { chat: response });
-        const holder_elem = $("table");
+        const holderElem = $('table');
         const login = document.getElementById('login').innerText;
-        View.chatAdd(holder_elem, response, login);
+        View.chatAdd(holderElem, response, login);
       }
     } else {
       titleEl.addClass('is-invalid');
@@ -34,8 +34,8 @@ $(() => {
 
   socket.on('chatAdd', async (data) => {
     const login = document.getElementById('login').innerText;
-    const holder_elem = $("table");
-    View.chatAdd(holder_elem, data.chat, login);
+    const holderElem = $('table');
+    View.chatAdd(holderElem, data.chat, login);
   });
 
   $('#chats').on('click', '.chatDelete', async function (e) {

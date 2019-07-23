@@ -23,8 +23,8 @@ $(document).ready(() => {
 
       if (response) {
         socket.emit('messageCreate', { message: response, room: roomName });
-        const holder_elem = $("table");
-        View.messageAdd(holder_elem, response);
+        const holderElem = $('table');
+        View.messageAdd(holderElem, response);
       }
     } else {
       messageEl.addClass('is-invalid');
@@ -35,15 +35,14 @@ $(document).ready(() => {
   });
 
   socket.on('messageAdd', async (data) => {
-    const holder_elem = $("table");
-    View.messageAdd(holder_elem, data.message);
+    const holderElem = $('table');
+    View.messageAdd(holderElem, data.message);
   });
 
   socket.on('chatDelete', (data) => {
-    if(roomName === data.id) {
+    if (roomName === data.id) {
       alert('Chat was closed!');
       window.location.href = '/chat';
     }
   });
 });
-
