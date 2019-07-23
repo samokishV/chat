@@ -1,6 +1,5 @@
 const { check } = require('express-validator');
 const UserService = require('../services/userService.js');
-const logger = require('../logger.js');
 
 exports.registration = [
   check('login')
@@ -38,20 +37,4 @@ exports.login = [
       });
     })
     .withMessage('Wrong password'),
-];
-
-exports.chatStore = [
-  check('title')
-    .trim()
-    .escape()
-    .not()
-    .isEmpty(),
-];
-
-exports.messageStore = [
-  check('message')
-    .trim()
-    .escape()
-    .not()
-    .isEmpty(),
 ];

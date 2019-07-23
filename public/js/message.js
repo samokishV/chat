@@ -14,12 +14,7 @@ $(document).ready(() => {
 
     if (message) {
       messageEl.removeClass('is-invalid');
-
-      const type = 'POST';
-      const href = $(this).attr('action');
-      const str = $(this).serialize();
-      
-      request(type, href, str, result => result);
+      socket.emit('messageCreate', {message: message, id: roomName});
     } else {
       messageEl.addClass('is-invalid');
     }

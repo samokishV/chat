@@ -18,18 +18,3 @@ exports.index = async (req, res) => {
   });
 };
 
-exports.create = async (req, res, io) => {
-  const chatId = req.params.id;
-  const userId = req.cookies.user_id;
-  const { message } = req.body;
-
-  const errors = validationResult(req);
-
-  if (errors.isEmpty()) {
-    MessageService.create(chatId, message, userId).then(async (result) => {
-      io.emit('messageAddGlobal', result);
-      io.to(result.chatId).emit('messageAdd', result);
-      res.sendStatus(200);
-    }).catch(err => res.sendStatus(500));
-  }
-};
