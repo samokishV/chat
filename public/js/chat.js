@@ -15,14 +15,7 @@ $(() => {
       const href = $(this).attr('action');
       const str = $(this).serialize();
 
-      const response = await request(type, href, str, result => result);
-
-      if (response) {
-        socket.emit('chatCreate', { chat: response });
-        const holderElem = $('table');
-        const login = document.getElementById('login').innerText;
-        View.chatAdd(holderElem, response, login);
-      }
+      request(type, href, str, result => result);
     } else {
       titleEl.addClass('is-invalid');
     }
@@ -35,7 +28,7 @@ $(() => {
   socket.on('chatAdd', async (data) => {
     const login = document.getElementById('login').innerText;
     const holderElem = $('table');
-    View.chatAdd(holderElem, data.chat, login);
+    View.chatAdd(holderElem, data, login);
   });
 
   $('#chats').on('click', '.chatDelete', async function (e) {
@@ -45,17 +38,13 @@ $(() => {
     const href = $(this).attr('href');
     const str = {};
 
-    const response = await request(type, href, str, result => result);
-
-    if (response) {
-      socket.emit('chatRemove', { id: response.id });
-    }
+    request(type, href, str, result => result);
 
     return false;
   });
 
   socket.on('chatDelete', (data) => {
-    $(`#tr${data.id}`).remove();
+    $(`#tr${data}`).remove();
   });
 
   socket.on('messageAddGlobal', (data) => {

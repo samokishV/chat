@@ -10,7 +10,7 @@ const auth = require('./middleware/auth');
 const equalHelper = require('./helpers/equalHelper');
 
 module.exports = {
-  start(app) {
+  start(app, io) {
     require('express-reverse')(app);
 
     app.engine('hbs', expressHbs({
@@ -44,12 +44,12 @@ module.exports = {
 
     app.get('chat', '/chat', chatController.index);
 
-    app.post(['/', '/chat'], validate.chatStore, chatController.create);
+    app.post(['/', '/chat'], validate.chatStore, (req, res) => chatController.create(req, res, io));
 
-    app.delete('/chat/:id', chatController.delete);
+    app.delete('/chat/:id', (req, res) => chatController.delete(req, res, io));
 
     app.get('/chat/:id', messageController.index);
 
-    app.post('/chat/:id', validate.messageStore, messageController.create);
+    app.post('/chat/:id', validate.messageStore, (req, res) => messageController.create(req, res, io));
   },
 };

@@ -18,14 +18,8 @@ $(document).ready(() => {
       const type = 'POST';
       const href = $(this).attr('action');
       const str = $(this).serialize();
-
-      const response = await request(type, href, str, result => result);
-
-      if (response) {
-        socket.emit('messageCreate', { message: response, room: roomName });
-        const holderElem = $('table');
-        View.messageAdd(holderElem, response);
-      }
+      
+      request(type, href, str, result => result);
     } else {
       messageEl.addClass('is-invalid');
     }
@@ -36,7 +30,7 @@ $(document).ready(() => {
 
   socket.on('messageAdd', async (data) => {
     const holderElem = $('table');
-    View.messageAdd(holderElem, data.message);
+    View.messageAdd(holderElem, data);
   });
 
   socket.on('chatDelete', (data) => {

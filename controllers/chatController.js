@@ -16,7 +16,7 @@ exports.index = async (req, res) => {
   });
 };
 
-exports.create = async (req, res) => {
+exports.create = async (req, res, io) => {
   const { title } = req.body;
   const userId = req.cookies.user_id;
 
@@ -24,15 +24,17 @@ exports.create = async (req, res) => {
 
   if (errors.isEmpty()) {
     ChatService.create(title, userId).then(async (result) => {
-      res.send(result);
-    });
+      io.emit('chatAdd', result);
+      res.sendStatus(200);
+    }).catch((err) => res.sendStatus(500));
   }
 };
 
-exports.delete = async (req, res) => {
+exports.delete = async (req, res, io) => {
   const chatId = req.params.id;
 
-  ChatService.deleteById(chatId).then(
-    res.send({ id: chatId }),
-  );
+  ChatService.deleteById(chatId).then(async () => {
+    io.emit('chatDelete', chatId);
+    res.sendStatus(200);
+  }).catch((err) => res.sendStatus(500));
 };

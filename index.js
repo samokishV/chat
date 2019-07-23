@@ -10,7 +10,7 @@ const consumer = require('./consumer.js');
 const route = require('./route.js');
 
 consumer.start(io);
-route.start(app);
+route.start(app, io);
 
 const port = config.get('serverConfig.port');
 const host = config.get('serverConfig.host');

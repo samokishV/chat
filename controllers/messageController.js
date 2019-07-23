@@ -2,7 +2,6 @@ const { validationResult } = require('express-validator');
 const MessageService = require('../services/messageService');
 const ChatService = require('../services/chatService');
 
-
 exports.index = async (req, res) => {
   const chatId = req.params.id;
 
@@ -19,7 +18,7 @@ exports.index = async (req, res) => {
   });
 };
 
-exports.create = async (req, res) => {
+exports.create = async (req, res, io) => {
   const chatId = req.params.id;
   const userId = req.cookies.user_id;
   const { message } = req.body;
@@ -28,7 +27,9 @@ exports.create = async (req, res) => {
 
   if (errors.isEmpty()) {
     MessageService.create(chatId, message, userId).then(async (result) => {
-      res.send(result);
-    });
+      io.emit('messageAddGlobal', result);
+      io.to(result.chatId).emit('messageAdd', result);
+      res.sendStatus(200);
+    }).catch(err => res.sendStatus(500));
   }
 };
