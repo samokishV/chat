@@ -6,7 +6,7 @@ module.exports = {
       });
 
       socket.on('chatCreate', (data) => {
-        io.emit('chatAdd', data);
+        socket.broadcast.emit('chatAdd', data);
       });
 
       socket.on('chatRemove', (data) => {

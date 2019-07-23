@@ -55,16 +55,3 @@ exports.messageStore = [
     .not()
     .isEmpty(),
 ];
-
-exports.chatTableRowData = (req, res, next) => {
-  if (!req.body.login) {
-    logger.error('Error adding row to chat table. Login is required in chatController.renderTableRow()');
-  } else {
-    try {
-      JSON.parse(req.body.chat);
-      return next();
-    } catch (e) {
-      logger.error('Error adding row to chat table. JSON data is required in chatController.renderTableRow()');
-    }
-  }
-};

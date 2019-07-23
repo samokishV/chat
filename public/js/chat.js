@@ -19,6 +19,9 @@ $(() => {
 
       if (response) {
         socket.emit('chatCreate', { chat: response });
+        const holder_elem = $("table");
+        const login = document.getElementById('login').innerText;
+        View.chatAdd(holder_elem, response, login);
       }
     } else {
       titleEl.addClass('is-invalid');
@@ -31,15 +34,8 @@ $(() => {
 
   socket.on('chatAdd', async (data) => {
     const login = document.getElementById('login').innerText;
-    const { chat } = data;
-
-    const type = 'POST';
-    const href = '/chat-row-template';
-    const str = { login, chat: JSON.stringify(chat) };
-
-    const response = await request(type, href, str, result => result);
-
-    $('table').append(response);
+    const holder_elem = $("table");
+    View.chatAdd(holder_elem, data.chat, login);
   });
 
   $('#chats').on('click', '.chatDelete', async function (e) {

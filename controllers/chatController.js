@@ -36,14 +36,3 @@ exports.delete = async (req, res) => {
     res.send({ id: chatId }),
   );
 };
-
-exports.renderTableRow = (req, res) => {
-  const chat = JSON.parse(req.body.chat);
-  const { login } = req.body;
-
-  res.render('partials/chat.hbs', {
-    chat,
-    login,
-    layout: false,
-  });
-};
