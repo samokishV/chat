@@ -1,5 +1,7 @@
 const { validationResult } = require('express-validator');
 const UserService = require('../services/userService.js');
+var htmlDecode = require('js-htmlencode').htmlDecode;
+const decode = require('unescape');
 
 exports.showRegisterForm = (req, res) => {
   res.render('registration.hbs', {
@@ -21,7 +23,7 @@ exports.register = (req, res) => {
   } else {
     res.render('registration.hbs', {
       title: 'Registration',
-      login,
+      login: htmlDecode(decode(login)),
       password,
       errors: errors.array(),
     });
@@ -48,7 +50,7 @@ exports.login = (req, res) => {
   } else {
     res.render('login.hbs', {
       title: 'Log in',
-      login,
+      login: htmlDecode(decode(login)),
       password,
       errors: errors.array(),
     });

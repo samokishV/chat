@@ -8,8 +8,8 @@ class View {
     const output = `
     <tr>
         <td>${obj.createdAt}</td>
-        <td>${obj.user.login}</td>
-        <td>${obj.message}</td>
+        <td>${encodeString(obj.user.login)}</td>
+        <td>${encodeString(obj.message)}</td>
     </tr>`;
 
     $(holderElem).append(output);
@@ -29,10 +29,10 @@ class View {
       <td>${chat.id}</td>
       <td>
         <a class="room-name" href="/chat/${chat.id}">
-            ${chat.title}
+          ${encodeString(chat.title)}
         </a>
       </td>
-      <td>${chat.user.login}</td>
+      <td>${encodeString(chat.user.login)}</td>
       <td class="number">`;
     if (chat.count) {
       output += chat.messages.length;

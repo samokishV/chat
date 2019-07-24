@@ -1,8 +1,8 @@
 const Sequelize = require('sequelize');
 const dayjs = require('dayjs');
-const decode = require('unescape');
 const sequelize = require('./dbConnect');
 const logger = require('../logger.js');
+const htmlDecode = require('js-htmlencode').htmlDecode;
 
 const Message = sequelize.define('message', {
   id: {
@@ -27,7 +27,7 @@ const Message = sequelize.define('message', {
   getterMethods: {
     message() {
       const message = this.getDataValue('message');
-      return decode(message);
+      return htmlDecode(message);
     },
     createdAt() {
       const createdAt = this.getDataValue('createdAt');

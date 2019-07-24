@@ -1,6 +1,7 @@
 const cookie = require('cookie');
 const MessageService = require('./services/messageService');
 const ChatService = require('./services/chatService.js');
+var htmlEncode = require('js-htmlencode').htmlEncode;
 
 module.exports = {
   start(io) {
@@ -10,12 +11,12 @@ module.exports = {
       });
 
       socket.on('messageCreate', (data) => {
-        const chatId = data.id;
+        const chatId = data.id; 
         const cookies = cookie.parse(socket.request.headers.cookie); 
-        const userId  = cookies.user_id;
+        const userId  = cookies.user_id;     
         let message = data.message;
-        message = escape(message.trim());
-      
+        message = htmlEncode(message.trim());
+
         if(message) {
           MessageService.create(chatId, message, userId).then(async (result) => {
             io.emit('messageAddGlobal', result);
@@ -28,7 +29,7 @@ module.exports = {
         const cookies = cookie.parse(socket.request.headers.cookie); 
         const userId  = cookies.user_id;
         let title = data.title;
-        title = escape(title.trim());
+        title = htmlEncode(title.trim());
       
         if(title) {
           ChatService.create(title, userId).then(async (result) => {

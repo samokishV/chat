@@ -27,6 +27,7 @@
     "express-session": "^1.16.2",
     "express-validator": "^6.0.1",
     "hbs": "^4.0.4",
+    "js-htmlencode": "^0.3.0",
     "log4js": "^4.5.1",
     "mysql2": "^1.6.5",
     "named-routes": "^2.0.7",

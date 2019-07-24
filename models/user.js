@@ -1,8 +1,9 @@
 const Sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
-const decode = require('unescape');
 const sequelize = require('./dbConnect');
 const logger = require('../logger.js');
+var htmlDecode = require('js-htmlencode').htmlDecode;
+const decode = require('unescape');
 
 const User = sequelize.define('user', {
   id: {
@@ -23,7 +24,7 @@ const User = sequelize.define('user', {
   getterMethods: {
     login() {
       const login = this.getDataValue('login');
-      return decode(login);
+      return htmlDecode(decode(login));
     },
   },
 });
