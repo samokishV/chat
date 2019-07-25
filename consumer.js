@@ -40,9 +40,13 @@ module.exports = {
 
       socket.on('chatRemove', (data) => {
         const chatId = data.id;
+        const cookies = cookie.parse(socket.request.headers.cookie); 
+        const userId  = cookies.user_id;
 
-        ChatService.deleteById(chatId).then(async () => {
-          io.emit('chatDelete', {id: chatId});
+        ChatService.deleteById(chatId, userId).then(async (result) => {
+          if(result) {
+            io.emit('chatDelete', {id: chatId});
+          }
         });
       });
     });

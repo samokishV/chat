@@ -89,10 +89,11 @@ ChatService.exists = id => Chat.findOne({
 
 /**
  * @param {number} id
+ * @param {number} userId
  * @returns Promise
  */
-ChatService.deleteById = id => Chat.destroy({
-  where: { id },
+ChatService.deleteById = (id, userId) => Chat.destroy({
+  where: { id, userId },
 }).catch(
   (err) => {
     logger.debug(err);
