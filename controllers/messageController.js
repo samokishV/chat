@@ -6,15 +6,20 @@ exports.index = async (req, res) => {
   const chatId = req.params.id;
 
   const chat = await ChatService.findById(chatId);
-  const pageTitle = chat.title;
 
-  const messages = await MessageService.getByChatId(chatId);
+  if (chat == null || chat == 'undefined') {
+    res.sendStatus(404);
+  } else {
+    const pageTitle = chat.title;
 
-  res.render('chatPage.hbs', {
-    title: pageTitle,
-    messages,
-    room: chatId,
-    auth: true,
-  });
+    const messages = await MessageService.getByChatId(chatId);
+  
+    res.render('chatPage.hbs', {
+      title: pageTitle,
+      messages,
+      room: chatId,
+      auth: true,
+    });
+  }
 };
 
