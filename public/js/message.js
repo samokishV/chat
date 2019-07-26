@@ -8,18 +8,22 @@ $(document).ready(() => {
   // eslint-disable-next-line no-undef
   $('form').submit(async function (e) {
     e.preventDefault();
+    const ifConnected = checkConnection(messageEl);
 
-    let message = messageEl.val();
-    message = message.trim();
+    if(ifConnected) {
+      let message = messageEl.val();
+      message = message.trim();
 
-    if (message) {
-      messageEl.removeClass('is-invalid');
-      socket.emit('messageCreate', {message: message, id: roomName});
-    } else {
-      messageEl.addClass('is-invalid');
+      if (message) {
+        messageEl.removeClass('is-invalid');
+        socket.emit('messageCreate', {message: message, id: roomName});
+      } else {
+        messageEl.addClass('is-invalid');
+      }
+
+      messageEl.val(' ');
     }
 
-    messageEl.val(' ');
     return false;
   });
 
@@ -34,4 +38,7 @@ $(document).ready(() => {
       window.location.href = '/chat';
     }
   });
+
+  setInterval(() => {checkConnection(messageEl)}, 3000);
 });
+

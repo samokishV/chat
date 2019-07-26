@@ -12,3 +12,15 @@
 .cover {
     width: 1000px;
 }
+
+.connection-message {
+    display: none;
+}
+
+textarea.red-border {
+    border-color: red;
+}
+
+input.red-border {
+    border-color: red;
+}

@@ -5,17 +5,21 @@ $(() => {
   $('form').submit(async function (e) {
     e.preventDefault();
 
-    let title = titleEl.val();
-    title = title.trim();
+    const ifConnected = checkConnection(titleEl);
 
-    if (title) {
-      titleEl.removeClass('is-invalid');
-      socket.emit('chatCreate', {title: title});
-    } else {
-      titleEl.addClass('is-invalid');
+    if(ifConnected) {    
+      let title = titleEl.val();
+      title = title.trim();
+
+      if (title) {
+        titleEl.removeClass('is-invalid');
+        socket.emit('chatCreate', {title: title});
+      } else {
+        titleEl.addClass('is-invalid');
+      }
+
+      titleEl.val(' ');
     }
-
-    titleEl.val(' ');
 
     return false;
   });
@@ -52,4 +56,6 @@ $(() => {
   if (performance.navigation.type === 2) {
     location.reload(true);
   }
+
+  setInterval(() => {checkConnection(titleEl)}, 3000);  
 });
