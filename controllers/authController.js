@@ -1,7 +1,7 @@
 const { validationResult } = require('express-validator');
-const UserService = require('../services/userService.js');
-var htmlDecode = require('js-htmlencode').htmlDecode;
+const { htmlDecode } = require('js-htmlencode');
 const decode = require('unescape');
+const UserService = require('../services/userService.js');
 
 exports.showRegisterForm = (req, res) => {
   res.render('registration.hbs', {

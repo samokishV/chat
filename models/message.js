@@ -1,8 +1,8 @@
 const Sequelize = require('sequelize');
 const dayjs = require('dayjs');
+const { htmlDecode } = require('js-htmlencode');
 const sequelize = require('./dbConnect');
 const logger = require('../logger.js');
-const htmlDecode = require('js-htmlencode').htmlDecode;
 
 const Message = sequelize.define('message', {
   id: {

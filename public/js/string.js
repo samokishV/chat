@@ -1,30 +1,29 @@
-  /**
-   * 
-   * @param {string} str 
+/**
+   *
+   * @param {string} str
    */
-  function decodeString(str) {
-    const map = {
+function decodeString(str) {
+  const map = {
     '&amp;': '&',
     '&lt;': '<',
     '&gt;': '>',
     '&quot;': '"',
     '&#039;': "'",
-    };
-    return str.replace(/&amp;|&lt;|&gt;|&quot;|&#039;/g, m => map[m]);
   };
+  return str.replace(/&amp;|&lt;|&gt;|&quot;|&#039;/g, m => map[m]);
+}
 
-  /**
-   * 
-   * @param {string} str 
+/**
+   *
+   * @param {string} str
    */
-  function encodeString(str) {
-    const map = {
+function encodeString(str) {
+  const map = {
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
     '""': '&quot;',
-    "'": "&#039;",
-    };
-    return str.replace(/&|<|>|""|'/g, m => map[m]);
+    "'": '&#039;',
   };
-
+  return str.replace(/&|<|>|""|'/g, m => map[m]);
+}

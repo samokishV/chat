@@ -13,7 +13,7 @@ exports.index = async (req, res) => {
     const pageTitle = chat.title;
 
     const messages = await MessageService.getByChatId(chatId);
-  
+
     res.render('chatPage.hbs', {
       title: pageTitle,
       messages,
@@ -22,4 +22,3 @@ exports.index = async (req, res) => {
     });
   }
 };
-

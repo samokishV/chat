@@ -16,8 +16,8 @@ exports.registration = [
   check('password')
     .trim()
     .not()
-    .isEmpty() 
-    .withMessage('Spaces is not allowed')   
+    .isEmpty()
+    .withMessage('Spaces is not allowed')
     .isLength({ min: 5 })
     .withMessage('Your password must be at least 5 characters'),
 ];

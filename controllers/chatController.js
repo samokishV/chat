@@ -1,7 +1,7 @@
 const { validationResult } = require('express-validator');
+const { htmlDecode } = require('js-htmlencode');
 const ChatService = require('../services/chatService.js');
 const UserService = require('../services/userService.js');
-var htmlDecode = require('js-htmlencode').htmlDecode;
 
 exports.index = async (req, res) => {
   const chats = await ChatService.getFullInfo();

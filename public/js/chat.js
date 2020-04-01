@@ -2,18 +2,18 @@ $(() => {
   const socket = io();
   const titleEl = $('#title');
 
-  $('form').submit(async function (e) {
+  $('form').submit(async (e) => {
     e.preventDefault();
 
     const ifConnected = checkConnection(titleEl);
 
-    if(ifConnected) {    
+    if (ifConnected) {
       let title = titleEl.val();
       title = title.trim();
 
       if (title) {
         titleEl.removeClass('is-invalid');
-        socket.emit('chatCreate', {title: title});
+        socket.emit('chatCreate', { title });
       } else {
         titleEl.addClass('is-invalid');
       }
@@ -33,10 +33,10 @@ $(() => {
   $('#chats').on('click', '.chatDelete', async function (e) {
     e.preventDefault();
 
-    let id = $(this).closest("tr").attr("id");
-    id = id.replace(/tr/, ''); 
+    let id = $(this).closest('tr').attr('id');
+    id = id.replace(/tr/, '');
 
-    socket.emit('chatRemove', {id: id});
+    socket.emit('chatRemove', { id });
 
     return false;
   });
@@ -46,7 +46,7 @@ $(() => {
   });
 
   socket.on('messageAddGlobal', (data) => {
-    const chatId  = data.chatId;
+    const { chatId } = data;
     const numberEl = $(`#tr${chatId} .number`);
     const count = parseInt(numberEl[0].innerText);
 
@@ -57,5 +57,5 @@ $(() => {
     location.reload(true);
   }
 
-  setInterval(() => {checkConnection(titleEl)}, 3000);  
+  setInterval(() => { checkConnection(titleEl); }, 3000);
 });

@@ -1,9 +1,9 @@
 const Sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
+const { htmlDecode } = require('js-htmlencode');
+const decode = require('unescape');
 const sequelize = require('./dbConnect');
 const logger = require('../logger.js');
-var htmlDecode = require('js-htmlencode').htmlDecode;
-const decode = require('unescape');
 
 const User = sequelize.define('user', {
   id: {

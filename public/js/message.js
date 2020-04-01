@@ -6,17 +6,17 @@ $(document).ready(() => {
   socket.emit('room', { room: roomName });
 
   // eslint-disable-next-line no-undef
-  $('form').submit(async function (e) {
+  $('form').submit(async (e) => {
     e.preventDefault();
     const ifConnected = checkConnection(messageEl);
 
-    if(ifConnected) {
+    if (ifConnected) {
       let message = messageEl.val();
       message = message.trim();
 
       if (message) {
         messageEl.removeClass('is-invalid');
-        socket.emit('messageCreate', {message: message, id: roomName});
+        socket.emit('messageCreate', { message, id: roomName });
       } else {
         messageEl.addClass('is-invalid');
       }
@@ -39,6 +39,5 @@ $(document).ready(() => {
     }
   });
 
-  setInterval(() => {checkConnection(messageEl)}, 3000);
+  setInterval(() => { checkConnection(messageEl); }, 3000);
 });
-

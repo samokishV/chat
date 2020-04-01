@@ -1,7 +1,7 @@
 const cookie = require('cookie');
+const { htmlEncode } = require('js-htmlencode');
 const MessageService = require('./services/messageService');
 const ChatService = require('./services/chatService.js');
-var htmlEncode = require('js-htmlencode').htmlEncode;
 
 module.exports = {
   start(io) {
@@ -11,13 +11,13 @@ module.exports = {
       });
 
       socket.on('messageCreate', (data) => {
-        const chatId = data.id; 
-        const cookies = cookie.parse(socket.request.headers.cookie); 
-        const userId  = cookies.user_id;     
-        let message = data.message;
+        const chatId = data.id;
+        const cookies = cookie.parse(socket.request.headers.cookie);
+        const userId = cookies.user_id;
+        let { message } = data;
         message = htmlEncode(message.trim());
 
-        if(message) {
+        if (message) {
           MessageService.create(chatId, message, userId).then(async (result) => {
             io.emit('messageAddGlobal', result);
             io.to(result.chatId).emit('messageAdd', result);
@@ -26,12 +26,12 @@ module.exports = {
       });
 
       socket.on('chatCreate', (data) => {
-        const cookies = cookie.parse(socket.request.headers.cookie); 
-        const userId  = cookies.user_id;
-        let title = data.title;
+        const cookies = cookie.parse(socket.request.headers.cookie);
+        const userId = cookies.user_id;
+        let { title } = data;
         title = htmlEncode(title.trim());
-      
-        if(title) {
+
+        if (title) {
           ChatService.create(title, userId).then(async (result) => {
             io.emit('chatAdd', result);
           });
@@ -40,17 +40,15 @@ module.exports = {
 
       socket.on('chatRemove', (data) => {
         const chatId = data.id;
-        const cookies = cookie.parse(socket.request.headers.cookie); 
-        const userId  = cookies.user_id;
+        const cookies = cookie.parse(socket.request.headers.cookie);
+        const userId = cookies.user_id;
 
         ChatService.deleteById(chatId, userId).then(async (result) => {
-          if(result) {
-            io.emit('chatDelete', {id: chatId});
+          if (result) {
+            io.emit('chatDelete', { id: chatId });
           }
         });
       });
     });
-  }, 
+  },
 };
-
-
